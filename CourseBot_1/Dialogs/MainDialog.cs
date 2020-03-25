@@ -1,0 +1,231 @@
+﻿using CourseBot_1.Models;
+using CourseBot_1.Services;
+using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Choices;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Net.Mail;
+
+namespace CourseBot_1.Dialogs
+{
+    public class MainDialog : ComponentDialog
+    {
+
+        private readonly BotStateService _botStateService;
+
+        public MainDialog(string dialogId, BotStateService botStateService) : base(dialogId)
+        {
+            _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
+
+            InitializeWaterfallDialog();
+        }
+
+
+        private void InitializeWaterfallDialog()
+        {
+            //Create waterfall steps
+            var waterfallSteps = new WaterfallStep[]
+            {
+                BudgetStepAsync,
+                DurationStepAsync,
+                StartworkStepAsync,
+                PriceHStepAsync,
+                CommentStepAsync,
+                EmailStepAsync,
+                PolicyStepAsync,
+                SummaryStepAsync
+            };
+
+            //Types of subdialogs
+            AddDialog(new WaterfallDialog($"{nameof(MainDialog)}.mainFlow", waterfallSteps)); 
+            AddDialog(new TextPrompt($"{nameof(MainDialog)}.budget"));
+            AddDialog(new DateTimePrompt($"{nameof(MainDialog)}.duration"));
+            AddDialog(new DateTimePrompt($"{nameof(MainDialog)}.start"));
+            AddDialog(new ChoicePrompt($"{nameof(MainDialog)}.priceH"));
+            AddDialog(new TextPrompt($"{nameof(MainDialog)}.comment"));
+            AddDialog(new TextPrompt($"{nameof(MainDialog)}.email", EmailStepValidatorAsync));
+            AddDialog(new ChoicePrompt($"{nameof(MainDialog)}.policy"));
+
+            
+            //Set the starting Dialog
+            InitialDialogId = $"{nameof(MainDialog)}.mainFlow";
+
+        }
+
+        #region Waterfall Steps
+
+        private async Task<DialogTurnResult> BudgetStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.budget",
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("Do you have a budget in mind?")
+                }, cancellationToken);
+
+        }
+
+        private async Task<DialogTurnResult> DurationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["budget"] = (string)stepContext.Result; //Saving value from previuos step
+
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.duration", //
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("What is the anticipated duration of the project?"),
+                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                }, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> StartworkStepAsync (WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            //Convertig string to the DateTime format
+            stepContext.Values["duration"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
+
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.start",
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("How soon do you need your dev team to start working?"),
+                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                }, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> PriceHStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            //Convertig string to the DateTime format
+            stepContext.Values["start"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
+
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.priceH",
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("What price per hour are you expecting to pay to your future development team? "),
+                    Choices = ChoiceFactory.ToChoices(new List<string> { "30-45 $/h", "45-60 $/h", "60+ $/h" }),
+                }, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> CommentStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["priceH"] = ((FoundChoice)stepContext.Result).Value;
+
+
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.comment",
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("Any words about your project you'd like to leave?")
+                }, cancellationToken);
+
+        }
+
+        private async Task<DialogTurnResult> EmailStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["comment"] = (string)stepContext.Result;
+
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.email",
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("How should we get in touch? "),
+                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                }, cancellationToken);
+
+        }
+
+        private async Task<DialogTurnResult> PolicyStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            //Convertig string to the DateTime format
+            stepContext.Values["email"] = (string)stepContext.Result;
+
+            return await stepContext.PromptAsync($"{nameof(MainDialog)}.policy",
+                new PromptOptions
+                {
+                    Prompt = MessageFactory.Text("By clicking the button below, you agree that we, will process your personal information in accordance with our 'Privacy Policy' "),
+                    Choices = ChoiceFactory.ToChoices(new List<string> { "Agree", "Cancel" }),
+                }, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["policy"] = ((FoundChoice)stepContext.Result).Value;
+
+            //Get the current profile object from userState.
+
+            var userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile(), cancellationToken);
+
+            //Save all of the data inside the user profile
+
+            userProfile.Budget = (string)stepContext.Values["budget"];
+            userProfile.Duration = (DateTime)stepContext.Values["duration"];
+            userProfile.Start = (DateTime)stepContext.Values["start"];
+            userProfile.PriceH = (string)stepContext.Values["PriceH"];
+            userProfile.Comment = (string)stepContext.Values["comment"];
+            userProfile.Email = (string)stepContext.Values["email"];
+            userProfile.Policy = (string)stepContext.Values["polciy"];
+
+            //Show the summary to the user
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Here is a summary of your form : "), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Budget : {0}",userProfile.Budget)), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Duration : {0}", userProfile.Duration)), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("We will start in : {0}", userProfile.Start)), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Price per hour : {0}", userProfile.PriceH)), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Comment  : {0}", userProfile.Comment)), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("E-mail : {0}", userProfile.Email)), cancellationToken);
+            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Policy status : {0}", userProfile.Policy)), cancellationToken);
+
+            //Save data in userState
+
+            await _botStateService.UserProfileAccessor.SetAsync(stepContext.Context, userProfile);
+
+            //WaterfallStep always finishes with the end of the Waterfall or with another dialog, here is is the end
+
+            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+
+
+        }
+
+        #region Validators
+
+        private Task<bool> EmailStepValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
+        {
+            var valid = false;
+
+            if (promptContext.Recognized.Succeeded)
+            {
+                valid = Regex.Match(promptContext.Recognized.Value, @"^(?("")("".+?(?<!\\)""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" +
+                @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-0-9a-z]*[0-9a-z]*\.)+[a-z0-9][\-a-z0-9]{0,22}[a-z0-9]))$").Success;
+            }
+
+            return Task.FromResult(valid);
+        }
+
+
+        
+
+
+
+
+
+
+        #endregion
+
+
+
+
+
+
+
+
+
+
+
+        #endregion
+
+
+
+
+
+    }
+}
