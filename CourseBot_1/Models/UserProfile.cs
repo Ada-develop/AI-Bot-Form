@@ -8,6 +8,11 @@ namespace CourseBot_1.Models
     public class UserProfile
     {
         public string Name { get; set; }
+
+        public string Organization { get; set; }
+
+        public string Developement { get; set; }
+        public string Branches { get; set; }
         public string Budget { get; set; }
         public DateTime Duration { get; set; }
         public DateTime Start { get; set; }
@@ -15,6 +20,7 @@ namespace CourseBot_1.Models
         public string Comment { get; set; }
         public string Email { get; set; }
         public string Policy { get; set; }
+
 
 
 
