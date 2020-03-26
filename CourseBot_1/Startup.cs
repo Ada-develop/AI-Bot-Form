@@ -15,6 +15,7 @@ using CourseBot_1.Bots;
 using Microsoft.Bot.Configuration;
 using CourseBot_1.Services;
 using Microsoft.Bot.Builder.Azure;
+using CourseBot_1.Dialogs;
 
 namespace CourseBot_1
 {
@@ -40,6 +41,9 @@ namespace CourseBot_1
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
+
+            ConfigureDialogs(services);
+
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, GreetingBotcs>();
         }
@@ -62,6 +66,11 @@ namespace CourseBot_1
             services.AddSingleton<ConversationState>();
             //Create an instanc of the state service
             services.AddSingleton<BotStateService>();
+        }
+
+        public void ConfigureDialogs(IServiceCollection services)
+        {
+            services.AddSingleton<GreetingBotcs>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
