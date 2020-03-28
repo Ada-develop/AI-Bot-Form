@@ -45,7 +45,7 @@ namespace CourseBot_1
             ConfigureDialogs(services);
 
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, GreetingBotcs>();
+            services.AddTransient<IBot, DialogBot<ConnectorDialog>>();
         }
 
 
@@ -70,7 +70,7 @@ namespace CourseBot_1
 
         public void ConfigureDialogs(IServiceCollection services)
         {
-            services.AddSingleton<GreetingBotcs>();
+            services.AddSingleton<ConnectorDialog>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -14,12 +14,12 @@ using System.Net.Mail;
 
 namespace CourseBot_1.Dialogs
 {
-    public class MainDialog : ComponentDialog
+    public class FlowDialog : ComponentDialog
     {
 
         private readonly BotStateService _botStateService;
 
-        public MainDialog(string dialogId, BotStateService botStateService) : base(dialogId)
+        public FlowDialog(string dialogId, BotStateService botStateService) : base(dialogId)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
 
@@ -43,18 +43,18 @@ namespace CourseBot_1.Dialogs
             };
 
             //Types of subdialogs
-            AddDialog(new WaterfallDialog($"{nameof(MainDialog)}.mainFlow", waterfallSteps)); 
-            AddDialog(new TextPrompt($"{nameof(MainDialog)}.budget"));
-            AddDialog(new DateTimePrompt($"{nameof(MainDialog)}.duration"));
-            AddDialog(new DateTimePrompt($"{nameof(MainDialog)}.start"));
-            AddDialog(new ChoicePrompt($"{nameof(MainDialog)}.priceH"));
-            AddDialog(new TextPrompt($"{nameof(MainDialog)}.comment"));
-            AddDialog(new TextPrompt($"{nameof(MainDialog)}.email", EmailStepValidatorAsync));
-            AddDialog(new ChoicePrompt($"{nameof(MainDialog)}.policy"));
+            AddDialog(new WaterfallDialog($"{nameof(FlowDialog)}.mainFlow", waterfallSteps)); 
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.budget"));
+            AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.duration"));
+            AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.start"));
+            AddDialog(new ChoicePrompt($"{nameof(FlowDialog)}.priceH"));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.comment"));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.email", EmailStepValidatorAsync));
+            AddDialog(new ChoicePrompt($"{nameof(FlowDialog)}.policy"));
 
             
             //Set the starting Dialog
-            InitialDialogId = $"{nameof(MainDialog)}.mainFlow";
+            InitialDialogId = $"{nameof(FlowDialog)}.mainFlow";
 
         }
 
@@ -62,7 +62,7 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> BudgetStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.budget",
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.budget",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Do you have a budget in mind?")
@@ -74,7 +74,7 @@ namespace CourseBot_1.Dialogs
         {
             stepContext.Values["budget"] = (string)stepContext.Result; //Saving value from previuos step
 
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.duration", //
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration", //
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What is the anticipated duration of the project?"),
@@ -87,7 +87,7 @@ namespace CourseBot_1.Dialogs
             //Convertig string to the DateTime format
             stepContext.Values["duration"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
 
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.start",
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.start",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("How soon do you need your dev team to start working?"),
@@ -100,7 +100,7 @@ namespace CourseBot_1.Dialogs
             //Convertig string to the DateTime format
             stepContext.Values["start"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
 
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.priceH",
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.priceH",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What price per hour are you expecting to pay to your future development team? "),
@@ -113,7 +113,7 @@ namespace CourseBot_1.Dialogs
             stepContext.Values["priceH"] = ((FoundChoice)stepContext.Result).Value;
 
 
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.comment",
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.comment",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Any words about your project you'd like to leave?")
@@ -125,7 +125,7 @@ namespace CourseBot_1.Dialogs
         {
             stepContext.Values["comment"] = (string)stepContext.Result;
 
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.email",
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.email",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("How should we get in touch? "),
@@ -139,7 +139,7 @@ namespace CourseBot_1.Dialogs
             //Convertig string to the DateTime format
             stepContext.Values["email"] = (string)stepContext.Result;
 
-            return await stepContext.PromptAsync($"{nameof(MainDialog)}.policy",
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.policy",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("By clicking the button below, you agree that we, will process your personal information in accordance with our 'Privacy Policy' "),

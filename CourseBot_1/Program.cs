@@ -19,11 +19,11 @@ namespace CourseBot_1
         //Configure logging
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .ConfigureLogging((logging) =>
-            {
-                logging.AddDebug();
-                logging.AddConsole();
-            })
-                .UseStartup<Startup>();
+                .ConfigureLogging((logging) =>
+                {
+                 logging.AddDebug();
+                 logging.AddConsole();
+                })
+              .UseStartup<Startup>();
     }
 }

@@ -33,6 +33,24 @@ namespace CourseBot_1.Bots
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
         }
 
+
+        protected override async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
+        {
+            foreach (var member in membersAdded)
+            {
+                var welcomeText = "Hi there! Bot from BgTeams greetings you!";
+                if (member.Id != turnContext.Activity.Recipient.Id)
+                {
+                    await turnContext.SendActivityAsync(MessageFactory.Text(welcomeText, welcomeText), cancellationToken);
+                    
+                }
+            }
+
+
+        }
+
+
+
         public override async Task OnTurnAsync(ITurnContext turnContext, CancellationToken cancellationToken = default(CancellationToken))
         {
             //Base class implementation, responsible for forrwarding all of the message types 
@@ -52,7 +70,8 @@ namespace CourseBot_1.Bots
 
             //Run the dialog with the new message Activity
             await _dialog.Run(turnContext, _botStateService.DialogStateAccessor, cancellationToken);
-        }
+           
+        } 
 
 
 

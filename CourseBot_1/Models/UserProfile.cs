@@ -21,7 +21,9 @@ namespace CourseBot_1.Models
         public string Email { get; set; }
         public string Policy { get; set; }
 
+        public string Tech { get; set; }
 
+        public string Website { get; set; }
 
 
 

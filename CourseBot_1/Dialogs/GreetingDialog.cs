@@ -1,11 +1,14 @@
-﻿using CourseBot_1.Models;
+﻿using BotAttachment.Dialogs;
+using CourseBot_1.Models;
 using CourseBot_1.Services;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
+using Microsoft.Bot.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +25,6 @@ namespace CourseBot_1.Dialogs
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
 
-            //sad
             InitializeWaterfallDialog();
         }
 
@@ -32,19 +34,24 @@ namespace CourseBot_1.Dialogs
             //Create Waterfall Steps | Bot's state bag
             var waterfallSteps = new WaterfallStep[]
             {
+                
                 NameStepAsync,
                 NiceStepAsync,
                 OrganizationStepAsync,
                 DevelopementStepAsync,
                 BranchesStepAsync,
-                SumStepAsync,
+                NextDialogasync,
+                FinalStepAsync
+                //SumStepAsync,
 
 
             };
 
             //Add Named Dialogs , adding to the bot's state bag
-
+            AddDialog(new FlowDialog($"{nameof(GreetingDialog)}.flowDialog", _botStateService));
             AddDialog(new WaterfallDialog($"{nameof(GreetingDialog)}.mainFlow", waterfallSteps));
+            AddDialog(new FinalDevDialog($"{nameof(GreetingDialog)}.final", _botStateService));
+            AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.name"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement"));
@@ -94,7 +101,7 @@ namespace CourseBot_1.Dialogs
             }
             //Comunication:
             await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice to meet you {0}. ", userProfile.Name)), cancellationToken);
-            return await stepContext.EndDialogAsync(null, cancellationToken);
+            return await stepContext.NextAsync(null, cancellationToken);
         }
 
 
@@ -106,6 +113,7 @@ namespace CourseBot_1.Dialogs
                 {
                     Prompt = MessageFactory.Text("What type of an organization do you represent?")
                 }, cancellationToken);
+            
 
         }
 
@@ -122,24 +130,47 @@ namespace CourseBot_1.Dialogs
                     Prompt = MessageFactory.Text("Great! What type of project do you want to develop?"),
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
-
+            
         }
 
         private async Task<DialogTurnResult> BranchesStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["developement"] = (string)stepContext.Result;
 
-            return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.branches",
-                new PromptOptions
-                {
-                    Prompt = MessageFactory.Text("OK. What is the current stage of your project?"),
-                    Choices = ChoiceFactory.ToChoices(new List<string> { "Begin", "Mid", "Final" }),
-                }, cancellationToken);
+            {
+                return await stepContext.PromptAsync($"{nameof(ConnectorDialog)}.branch",
+                   new PromptOptions
+                   {
+                       Prompt = MessageFactory.Text("OK. What is the current stage of your project? "),
+                       RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
 
+                   }, cancellationToken);
+
+            }
         }
-        private async Task<DialogTurnResult> SumStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+
+
+
+
+
+        private async Task<DialogTurnResult> NextDialogasync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["branches"] = ((FoundChoice)stepContext.Result).Value;
+            return await stepContext.EndDialogAsync(null, cancellationToken);
+        }
+
+        private async Task<DialogTurnResult> FinalStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+
+            return await stepContext.EndDialogAsync(null, cancellationToken);
+        }
+
+
+
+
+
+            private async Task<DialogTurnResult> SumStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            stepContext.Values["branch"] = ((FoundChoice)stepContext.Result).Value;
 
             //Get the current profile object from userState.
 
@@ -162,7 +193,7 @@ namespace CourseBot_1.Dialogs
 
             //WaterfallStep always finishes with the end of the Waterfall or with another dialog, here is is the end
 
-            return await stepContext.BeginDialogAsync(nameof(MainDialog),null,cancellationToken);
+            return await stepContext.BeginDialogAsync(nameof(FlowDialog),null,cancellationToken);
         }
 
 
