@@ -61,21 +61,18 @@ namespace BotAttachment.Dialogs
         private static async Task<DialogTurnResult> AttachmentAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             
-            // We can send messages to the user at any point in the WaterfallStep.
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("That is awesome! You can upload your screens below."), cancellationToken);
 
             if (stepContext.Context.Activity.ChannelId == Channels.Msteams)
             {
-                // This attachment prompt example is not designed to work for Teams attachments, so skip it in this case
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text("Skipping attachment prompt in Teams channel..."), cancellationToken);
                 return await stepContext.NextAsync(null, cancellationToken);
             }
             else
             {
-                // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
                 var promptOptions = new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("Please attach a profile picture (or type any message to skip)."),
+                    Prompt = MessageFactory.Text("Please attach a project picture (or type any message to skip)."),
                     RetryPrompt = MessageFactory.Text("The attachment must be a jpeg/png image file."),
                 };
 
@@ -89,7 +86,6 @@ namespace BotAttachment.Dialogs
            
             stepContext.Values["attachment"] = ((IList<Attachment>)stepContext.Result)?.FirstOrDefault();
 
-            // WaterfallStep always finishes with the end of the Waterfall or with another dialog; here it is a Prompt Dialog.
             return await stepContext.PromptAsync(nameof(ConfirmPrompt), new PromptOptions { Prompt = MessageFactory.Text("Is this ok?") }, cancellationToken);
 
         }
@@ -98,8 +94,7 @@ namespace BotAttachment.Dialogs
         {
 
             return await stepContext.EndDialogAsync(null, cancellationToken);
-            //return await stepContext.BeginDialogAsync($"{nameof(FinalDevDialog)}.flowDialog", null, cancellationToken);
-
+           
         }
 
 
@@ -120,14 +115,14 @@ namespace BotAttachment.Dialogs
 
                 promptContext.Recognized.Value = validImages;
 
-                // If none of the attachments are valid images, the retry prompt should be sent.
+           
                 return validImages.Any();
             }
             else
             {
                 await promptContext.Context.SendActivityAsync("No attachments received. Proceeding without a picture...");
 
-                // We can return true from a validator function even if Recognized.Succeeded is false.
+         
                 return true;
             }
         }
