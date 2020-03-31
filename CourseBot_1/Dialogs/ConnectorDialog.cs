@@ -33,10 +33,11 @@ namespace CourseBot_1.Dialogs
         {
             var waterfallSteps = new WaterfallStep[]
             {
-                Initial,
-                Branch,
+                InitialAsync,
+                BranchAsync,
                 //Question,
-                Final
+                FinalAsync,
+                GoodByeAsync
             };
 
             AddDialog(new GreetingDialog($"{nameof(ConnectorDialog)}.greeting", _botStateService));
@@ -53,7 +54,7 @@ namespace CourseBot_1.Dialogs
 
 
 
-        private async Task<DialogTurnResult> Initial(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> InitialAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
             {
@@ -77,7 +78,7 @@ namespace CourseBot_1.Dialogs
 
         }
 
-        private async Task<DialogTurnResult> Question(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> QuestionAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             return await stepContext.PromptAsync($"{nameof(ConnectorDialog)}.branch",
                new PromptOptions
@@ -95,7 +96,7 @@ namespace CourseBot_1.Dialogs
 
 
 
-        private async Task<DialogTurnResult> Branch(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> BranchAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
 
 
@@ -117,10 +118,14 @@ namespace CourseBot_1.Dialogs
 
 
 
-        private async Task<DialogTurnResult> Final(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> FinalAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
-            return await stepContext.EndDialogAsync(null, cancellationToken);
+            
+        }
+        private async Task<DialogTurnResult> GoodByeAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
     }
 }

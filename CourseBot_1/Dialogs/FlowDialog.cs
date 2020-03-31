@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
+using Microsoft.Bot.Schema;
 
 namespace CourseBot_1.Dialogs
 {
@@ -39,7 +40,8 @@ namespace CourseBot_1.Dialogs
                 CommentStepAsync,
                 EmailStepAsync,
                 PolicyStepAsync,
-                SummaryStepAsync
+                CancelAsync,
+                //SummaryStepAsync
             };
 
             //Types of subdialogs
@@ -147,10 +149,40 @@ namespace CourseBot_1.Dialogs
                 }, cancellationToken);
         }
 
+        
+
+        private async Task<DialogTurnResult> CancelAsync( WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile(), cancellationToken);
+
+            stepContext.Values["policy"] = ((FoundChoice)stepContext.Result).Value;
+            if (stepContext.Context.Activity.Type == ActivityTypes.Message)
+            {
+                var text = stepContext.Context.Activity.Text.ToLowerInvariant();
+
+                switch (text)
+                {
+                    case "help":
+                    case "?":
+                        var helpMessage = MessageFactory.Text("Helper");
+                        await stepContext.Context.SendActivityAsync(helpMessage, cancellationToken);
+                        return new DialogTurnResult(DialogTurnStatus.Waiting);
+
+                    case "cancel":
+                    case "quit":
+                        var cancelMessage = MessageFactory.Text("Canceling...");
+                        await stepContext.Context.SendActivityAsync(cancelMessage, cancellationToken);
+                        return await stepContext.CancelAllDialogsAsync(cancellationToken);
+                }
+                
+            }
+            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
+        }
+        
+
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["policy"] = ((FoundChoice)stepContext.Result).Value;
-
+            
             //Get the current profile object from userState.
 
             var userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile(), cancellationToken);
@@ -160,20 +192,21 @@ namespace CourseBot_1.Dialogs
             userProfile.Budget = (string)stepContext.Values["budget"];
             userProfile.Duration = (DateTime)stepContext.Values["duration"];
             userProfile.Start = (DateTime)stepContext.Values["start"];
-            userProfile.PriceH = (string)stepContext.Values["PriceH"];
+            userProfile.PriceH = (string)stepContext.Values["priceH"];
             userProfile.Comment = (string)stepContext.Values["comment"];
             userProfile.Email = (string)stepContext.Values["email"];
             userProfile.Policy = (string)stepContext.Values["polciy"];
 
             //Show the summary to the user
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Here is a summary of your form : "), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Budget : {0}",userProfile.Budget)), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Duration : {0}", userProfile.Duration)), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("We will start in : {0}", userProfile.Start)), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Price per hour : {0}", userProfile.PriceH)), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Comment  : {0}", userProfile.Comment)), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("E-mail : {0}", userProfile.Email)), cancellationToken);
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Policy status : {0}", userProfile.Policy)), cancellationToken);
+            
+            //await stepContext.Context.SendActivityAsync(MessageFactory.Text($"Here is a summary of your form : "), cancellationToken);
+            //await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Budget : {0}",userProfile.Budget)), cancellationToken);
+           // await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Duration : {0}", userProfile.Duration)), cancellationToken);
+           // await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("We will start in : {0}", userProfile.Start)), cancellationToken);
+           // await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Price per hour : {0}", userProfile.PriceH)), cancellationToken);
+           // await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Comment  : {0}", userProfile.Comment)), cancellationToken);
+           // await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("E-mail : {0}", userProfile.Email)), cancellationToken);
+           // await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Policy status : {0}", userProfile.Policy)), cancellationToken);
 
             //Save data in userState
 

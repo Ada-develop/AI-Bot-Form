@@ -3,6 +3,7 @@ using CourseBot_1.Services;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
+using Microsoft.Bot.Schema;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace CourseBot_1.Dialogs
 
         //Waterfall inject, checking or we have users name in userProfile , if don't have kicks PromptAsync  and Prompt for name
         //Else NextAsync
-     
+
 
 
 
@@ -68,7 +69,7 @@ namespace CourseBot_1.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("That is awesome! Please use the field below to describe the technologies you are using and the dev team you have.")
-                }, cancellationToken) ;
+                }, cancellationToken);
 
 
         }
@@ -80,21 +81,33 @@ namespace CourseBot_1.Dialogs
         {
             stepContext.Values["tech"] = (string)stepContext.Result;
 
+
+
+
+
             return await stepContext.PromptAsync($"{nameof(FinalDevDialog)}.website",
+                
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Thanks!\nBelow you can provide a link to your project if you like"),
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
 
+
         }
 
         private async Task<DialogTurnResult> NextStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["website"] = (string)stepContext.Result;
+            
+
+                stepContext.Values["website"] = (string)stepContext.Result;
 
 
-            return await stepContext.BeginDialogAsync($"{nameof(FinalDevDialog)}.flowDialog", null, cancellationToken);
+            
+
+
+            return await stepContext.EndDialogAsync(null, cancellationToken);
+            //return await stepContext.BeginDialogAsync($"{nameof(FinalDevDialog)}.flowDialog", null, cancellationToken);
 
 
 
@@ -105,7 +118,23 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> NextDialogasync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            return await stepContext.EndDialogAsync(null, cancellationToken);
+
+
+            var userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile(), cancellationToken);
+
+
+          
+
+            userProfile.Tech = (string)stepContext.Values["tech"];
+            userProfile.Website = (string)stepContext.Values["website"];
+
+            //Save data in userState
+
+            await _botStateService.UserProfileAccessor.SetAsync(stepContext.Context, userProfile);
+
+            //WaterfallStep always finishes with the end of the Waterfall or with another dialog, here is is the end
+
+            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
         }
 
 

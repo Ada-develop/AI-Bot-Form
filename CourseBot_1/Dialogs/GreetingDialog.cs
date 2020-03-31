@@ -40,8 +40,7 @@ namespace CourseBot_1.Dialogs
                 OrganizationStepAsync,
                 DevelopementStepAsync,
                 BranchesStepAsync,
-                NextDialogasync,
-                FinalStepAsync
+                NextDialogasync,              
                 //SumStepAsync,
 
 
@@ -158,11 +157,6 @@ namespace CourseBot_1.Dialogs
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> FinalStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-
-            return await stepContext.EndDialogAsync(null, cancellationToken);
-        }
 
 
 

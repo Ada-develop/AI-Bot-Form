@@ -38,7 +38,7 @@ namespace CourseBot_1.Bots
         {
             foreach (var member in membersAdded)
             {
-                var welcomeText = "Hi there! Bot from BgTeams greetings you!";
+                var welcomeText = "Hi there! Bot from BgTeams greetings you!"; 
                 if (member.Id != turnContext.Activity.Recipient.Id)
                 {
                     await turnContext.SendActivityAsync(MessageFactory.Text(welcomeText, welcomeText), cancellationToken);
