@@ -33,6 +33,10 @@ namespace CourseBot_1
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            //Configure Services
+
+            services.AddSingleton<BotServices>();
+
 
             //Configure state
 

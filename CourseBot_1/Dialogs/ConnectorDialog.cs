@@ -18,11 +18,13 @@ namespace CourseBot_1.Dialogs
     public class ConnectorDialog : ComponentDialog
     {
         private readonly BotStateService _botStateService;
+        private readonly BotServices _botServices;
 
 
-        public ConnectorDialog(BotStateService botStateService) : base(nameof(ConnectorDialog))
+        public ConnectorDialog(BotStateService botStateService, BotServices botServices) : base(nameof(ConnectorDialog))
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
+            _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
 
             InitializeWaterfallDialog();
         }
@@ -56,21 +58,6 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> InitialAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            async Task OnMembersAddedAsync(IList<ChannelAccount> membersAdded, ITurnContext<IConversationUpdateActivity> turnContext, CancellationToken cancellationToken)
-            {
-                foreach (var member in membersAdded)
-                {
-                    var welcomeText = "Hi there! Bot from BgTeams greetings you!";
-                    if (member.Id != turnContext.Activity.Recipient.Id)
-                    {
-                        await turnContext.SendActivityAsync(MessageFactory.Text(welcomeText, welcomeText), cancellationToken);
-
-                    }
-                }
-
-
-            }
-
             return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.greeting", null, cancellationToken);
 
 
@@ -98,20 +85,26 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> BranchAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
 
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
 
-            if (Regex.Match(stepContext.Context.Activity.Text.ToLower(), "final").Success)
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            switch (topIntent.intent)
             {
-                return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
+                case "QueryStageFinal":
+                    return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
+                case "QueryStageMid":
+                    return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
+                case "QueryStage":
+                    return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
+                default:
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text($"I'm sorry I don't know what you mean"), cancellationToken);
+                    break;
             }
-            else if (Regex.Match(stepContext.Context.Activity.Text.ToLower(), "mid").Success)
-            {
-                return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
-            }
-            else
-            {
-                return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
-            };
+            return await stepContext.NextAsync(null, cancellationToken);
         }
 
 
