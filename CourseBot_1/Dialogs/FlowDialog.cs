@@ -130,7 +130,7 @@ namespace CourseBot_1.Dialogs
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.email",
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("How should we get in touch? "),
+                    Prompt = MessageFactory.Text("How should we get in touch? Give me your E-mail :) "),
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
 

@@ -25,6 +25,7 @@
       "CourseBot_1/1.0.0": {
         "dependencies": {
           "Microsoft.AspNetCore.App": "2.1.1",
+          "Microsoft.Bot.Builder.AI.Luis": "4.8.0",
           "Microsoft.Bot.Builder.Azure": "4.8.0",
           "Microsoft.Bot.Builder.Dialogs": "4.8.0",
           "Microsoft.Bot.Builder.Integration.AspNet.Core": "4.7.0",
@@ -35,6 +36,23 @@
         },
         "compile": {
           "CourseBot_1.dll": {}
+        }
+      },
+      "Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime/2.1.0": {
+        "dependencies": {
+          "Microsoft.Rest.ClientRuntime": "2.3.21",
+          "Microsoft.Rest.ClientRuntime.Azure": "3.3.19",
+          "Newtonsoft.Json": "12.0.3",
+          "System.Net.Http": "4.3.4"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Azure.CognitiveServices.Language.LUIS.dll": {
+            "assemblyVersion": "2.0.0.0",
+            "fileVersion": "2.1.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Azure.CognitiveServices.Language.LUIS.dll": {}
         }
       },
       "Microsoft.Azure.Cosmos/3.2.0": {
@@ -178,6 +196,27 @@
           "lib/netstandard2.0/Microsoft.Bot.Builder.dll": {}
         }
       },
+      "Microsoft.Bot.Builder.AI.Luis/4.8.0": {
+        "dependencies": {
+          "Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime": "2.1.0",
+          "Microsoft.Bot.Builder": "4.8.0",
+          "Microsoft.Bot.Builder.Dialogs": "4.8.0",
+          "Microsoft.Bot.Configuration": "4.8.0",
+          "Microsoft.Bot.Schema": "4.8.0",
+          "Microsoft.Extensions.Configuration": "2.1.1",
+          "Microsoft.Extensions.Configuration.Json": "2.1.1",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Bot.Builder.AI.Luis.dll": {
+            "assemblyVersion": "4.8.0.0",
+            "fileVersion": "4.8.0.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Bot.Builder.AI.Luis.dll": {}
+        }
+      },
       "Microsoft.Bot.Builder.Azure/4.8.0": {
         "dependencies": {
           "Microsoft.Azure.Cosmos": "3.2.0",
@@ -220,7 +259,7 @@
           "Microsoft.AspNetCore.Mvc.Core": "2.1.1",
           "Microsoft.AspNetCore.Mvc.Formatters.Json": "2.1.1",
           "Microsoft.Bot.Builder": "4.8.0",
-          "Microsoft.Bot.Configuration": "4.7.0",
+          "Microsoft.Bot.Configuration": "4.8.0",
           "Microsoft.Extensions.Logging": "2.1.1",
           "Microsoft.Net.Http.Headers": "2.1.1",
           "Newtonsoft.Json": "12.0.3",
@@ -236,16 +275,15 @@
           "lib/netstandard2.0/Microsoft.Bot.Builder.Integration.AspNet.Core.dll": {}
         }
       },
-      "Microsoft.Bot.Configuration/4.7.0": {
+      "Microsoft.Bot.Configuration/4.8.0": {
         "dependencies": {
           "Newtonsoft.Json": "12.0.3",
-          "SourceLink.Create.CommandLine": "2.8.3",
           "System.Threading.Tasks.Extensions": "4.5.1"
         },
         "runtime": {
           "lib/netstandard2.0/Microsoft.Bot.Configuration.dll": {
-            "assemblyVersion": "4.7.0.0",
-            "fileVersion": "4.7.0.0"
+            "assemblyVersion": "4.8.0.0",
+            "fileVersion": "4.8.0.0"
           }
         },
         "compile": {
@@ -495,6 +533,21 @@
         },
         "compile": {
           "lib/netstandard2.0/Microsoft.Rest.ClientRuntime.dll": {}
+        }
+      },
+      "Microsoft.Rest.ClientRuntime.Azure/3.3.19": {
+        "dependencies": {
+          "Microsoft.Rest.ClientRuntime": "2.3.21",
+          "Newtonsoft.Json": "12.0.3"
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Rest.ClientRuntime.Azure.dll": {
+            "assemblyVersion": "3.0.0.0",
+            "fileVersion": "3.3.18.0"
+          }
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Rest.ClientRuntime.Azure.dll": {}
         }
       },
       "Microsoft.Win32.Primitives/4.0.1": {
@@ -3817,6 +3870,13 @@
       "serviceable": false,
       "sha512": ""
     },
+    "Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime/2.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-8r62mdTtgrn2storrAKjX4c+GzweMuwIxINM9nPWKmFSRLNQQU3Ak1cneqAOEiONY3zkqJtF9ik6uuVbxDH9Qw==",
+      "path": "microsoft.azure.cognitiveservices.language.luis.runtime/2.1.0",
+      "hashPath": "microsoft.azure.cognitiveservices.language.luis.runtime.2.1.0.nupkg.sha512"
+    },
     "Microsoft.Azure.Cosmos/3.2.0": {
       "type": "package",
       "serviceable": true,
@@ -3859,6 +3919,13 @@
       "path": "microsoft.bot.builder/4.8.0",
       "hashPath": "microsoft.bot.builder.4.8.0.nupkg.sha512"
     },
+    "Microsoft.Bot.Builder.AI.Luis/4.8.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-bo5Usng5I9s7Qie2InjlPWDxe1Z18fU0qy8fyti473ptziswSggLdOBs3+7zBGhOHy/ZArfs3eUOqhRhUTcSkQ==",
+      "path": "microsoft.bot.builder.ai.luis/4.8.0",
+      "hashPath": "microsoft.bot.builder.ai.luis.4.8.0.nupkg.sha512"
+    },
     "Microsoft.Bot.Builder.Azure/4.8.0": {
       "type": "package",
       "serviceable": true,
@@ -3880,12 +3947,12 @@
       "path": "microsoft.bot.builder.integration.aspnet.core/4.7.0",
       "hashPath": "microsoft.bot.builder.integration.aspnet.core.4.7.0.nupkg.sha512"
     },
-    "Microsoft.Bot.Configuration/4.7.0": {
+    "Microsoft.Bot.Configuration/4.8.0": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-SPWotZdRJYXcci6mS3Co2llB6u3XBA7K4vjY8Ho1rkqokXNDTmcK82GkIiGVeEf0DEd1F2LXsC+40piuTVX1vw==",
-      "path": "microsoft.bot.configuration/4.7.0",
-      "hashPath": "microsoft.bot.configuration.4.7.0.nupkg.sha512"
+      "sha512": "sha512-zlerR+4F111orVgyQksdn2mWFvTVOh4Is1cz7tPqfzNhhyxts6ZHfFlsRM+vfqfbjbVZWmZDyPng2flI0THajw==",
+      "path": "microsoft.bot.configuration/4.8.0",
+      "hashPath": "microsoft.bot.configuration.4.8.0.nupkg.sha512"
     },
     "Microsoft.Bot.Connector/4.8.0": {
       "type": "package",
@@ -3991,6 +4058,13 @@
       "sha512": "sha512-KDYlgTyO693V6pi6SGk9eg+dDvKjuOgmkapbHdpnB1SmTPKpvWxVLIMyARJsCFLfB6axyURUJHOfvxBQ0yJKeg==",
       "path": "microsoft.rest.clientruntime/2.3.21",
       "hashPath": "microsoft.rest.clientruntime.2.3.21.nupkg.sha512"
+    },
+    "Microsoft.Rest.ClientRuntime.Azure/3.3.19": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-+NVBWvRXNwaAPTZUxjUlQggsrf3X0GbiRoxYfgc3kG9E55ZxZxvZPT3nIfC4DNqzGSXUEvmLbckdXgBBzGdUaA==",
+      "path": "microsoft.rest.clientruntime.azure/3.3.19",
+      "hashPath": "microsoft.rest.clientruntime.azure.3.3.19.nupkg.sha512"
     },
     "Microsoft.Win32.Primitives/4.0.1": {
       "type": "package",
