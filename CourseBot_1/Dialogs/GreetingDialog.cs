@@ -1,6 +1,8 @@
 ﻿using BotAttachment.Dialogs;
+using CourseBot_1.Helpers;
 using CourseBot_1.Models;
 using CourseBot_1.Services;
+using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime.Models;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
@@ -40,7 +42,9 @@ namespace CourseBot_1.Dialogs
                 NameStepAsync,
                 NiceStepAsync,
                 OrganizationStepAsync,
+                OrganizationLuisAsync,
                 DevelopementStepAsync,
+                DevelopmentLuisAsync,
                 BranchesStepAsync,
                 NextDialogasync,              
                 //SumStepAsync,
@@ -105,15 +109,45 @@ namespace CourseBot_1.Dialogs
             return await stepContext.NextAsync(null, cancellationToken);
         }
 
-
-
         private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            stepContext.Values["organization"] = (string)stepContext.Result;
+
             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("What type of an organization do you represent?")
+                    Prompt = MessageFactory.Text("What type of organization do you represent?"),
+                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
+
+        }
+
+
+
+        private async Task<DialogTurnResult> OrganizationLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
+
+
+
+
+            foreach(var entity in entities)
+            {
+                
+
+                if (Common.OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
+                {
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Wow ! {0}, I guess funny to work there!", entity.Entity)), cancellationToken);
+                }
+                else
+                {
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
+                }
+
+            }
+            return await stepContext.NextAsync(null, cancellationToken); 
             
 
         }
@@ -132,6 +166,34 @@ namespace CourseBot_1.Dialogs
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
             
+        }
+
+        private async Task<DialogTurnResult> DevelopmentLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
+
+
+
+
+            foreach (var entity in entities)
+            {
+
+
+                if (Common.DevType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
+                {
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", entity.Entity)), cancellationToken);
+                }
+                else
+                {
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
+                }
+
+            }
+            return await stepContext.NextAsync(null, cancellationToken);
+
+
         }
 
         private async Task<DialogTurnResult> BranchesStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
