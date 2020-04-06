@@ -48,6 +48,10 @@
               "target": "Package",
               "version": "[4.8.0, )"
             },
+            "Microsoft.Bot.Builder.AI.QnA": {
+              "target": "Package",
+              "version": "[4.8.0, )"
+            },
             "Microsoft.Bot.Builder.Azure": {
               "target": "Package",
               "version": "[4.8.0, )"

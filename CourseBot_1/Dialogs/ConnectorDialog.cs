@@ -6,6 +6,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
+using Microsoft.BotBuilderSamples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,11 +43,11 @@ namespace CourseBot_1.Dialogs
                 GoodByeAsync
             };
 
-            AddDialog(new GreetingDialog($"{nameof(ConnectorDialog)}.greeting", _botStateService));
-            AddDialog(new FlowDialog($"{nameof(ConnectorDialog)}.flowDialog", _botStateService));
-            AddDialog(new FinalDevDialog($"{nameof(ConnectorDialog)}.final", _botStateService));
+            AddDialog(new GreetingDialog($"{nameof(ConnectorDialog)}.greeting", _botStateService, _botServices ));
+            AddDialog(new FlowDialog($"{nameof(ConnectorDialog)}.flowDialog", _botStateService, _botServices));
+            AddDialog(new FinalDevDialog($"{nameof(ConnectorDialog)}.final", _botStateService,_botServices));
             AddDialog(new WaterfallDialog($"{nameof(ConnectorDialog)}.mainFlow", waterfallSteps));
-            AddDialog(new AttachmentDialog($"{nameof(ConnectorDialog)}.attach", _botStateService));
+            AddDialog(new AttachmentDialog($"{nameof(ConnectorDialog)}.attach", _botStateService,_botServices));
             AddDialog(new TextPrompt($"{nameof(ConnectorDialog)}.branch"));
 
 

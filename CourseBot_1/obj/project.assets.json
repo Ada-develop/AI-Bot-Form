@@ -1659,6 +1659,20 @@
           "lib/netstandard2.0/Microsoft.Bot.Builder.AI.Luis.dll": {}
         }
       },
+      "Microsoft.Bot.Builder.AI.QnA/4.8.0": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Bot.Builder": "4.8.0",
+          "Microsoft.Bot.Builder.Dialogs": "4.8.0",
+          "Microsoft.Bot.Configuration": "4.8.0"
+        },
+        "compile": {
+          "lib/netstandard2.0/Microsoft.Bot.Builder.AI.QnA.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/Microsoft.Bot.Builder.AI.QnA.dll": {}
+        }
+      },
       "Microsoft.Bot.Builder.Azure/4.8.0": {
         "type": "package",
         "dependencies": {
@@ -6556,6 +6570,20 @@
         "lib/netstandard2.0/Microsoft.Bot.Builder.AI.Luis.xml",
         "microsoft.bot.builder.ai.luis.4.8.0.nupkg.sha512",
         "microsoft.bot.builder.ai.luis.nuspec"
+      ]
+    },
+    "Microsoft.Bot.Builder.AI.QnA/4.8.0": {
+      "sha512": "2udQWd9/F3E3mz2mqvntPmq56J0+QwF77mjta81Ue8NaJ/FV0VkqNwhu0VXaR7kopNNIR82JGFylHWhDnt5s0g==",
+      "type": "package",
+      "path": "microsoft.bot.builder.ai.qna/4.8.0",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "icon.png",
+        "lib/netstandard2.0/Microsoft.Bot.Builder.AI.QnA.dll",
+        "lib/netstandard2.0/Microsoft.Bot.Builder.AI.QnA.xml",
+        "microsoft.bot.builder.ai.qna.4.8.0.nupkg.sha512",
+        "microsoft.bot.builder.ai.qna.nuspec"
       ]
     },
     "Microsoft.Bot.Builder.Azure/4.8.0": {
@@ -13971,6 +13999,7 @@
     ".NETCoreApp,Version=v2.1": [
       "Microsoft.AspNetCore.App >= 2.1.1",
       "Microsoft.Bot.Builder.AI.Luis >= 4.8.0",
+      "Microsoft.Bot.Builder.AI.QnA >= 4.8.0",
       "Microsoft.Bot.Builder.Azure >= 4.8.0",
       "Microsoft.Bot.Builder.Dialogs >= 4.8.0",
       "Microsoft.Bot.Builder.Integration.AspNet.Core >= 4.7.0",
@@ -14021,6 +14050,10 @@
             "autoReferenced": true
           },
           "Microsoft.Bot.Builder.AI.Luis": {
+            "target": "Package",
+            "version": "[4.8.0, )"
+          },
+          "Microsoft.Bot.Builder.AI.QnA": {
             "target": "Package",
             "version": "[4.8.0, )"
           },

@@ -12,6 +12,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Net.Mail;
 using Microsoft.Bot.Schema;
+using Microsoft.BotBuilderSamples;
 
 namespace CourseBot_1.Dialogs
 {
@@ -19,14 +20,21 @@ namespace CourseBot_1.Dialogs
     {
 
         private readonly BotStateService _botStateService;
+        private readonly BotServices _botServices;
+        private BotStateService botStateService;
 
-        public FlowDialog(string dialogId, BotStateService botStateService) : base(dialogId)
+        public FlowDialog(string dialogId, BotStateService botStateService, BotServices botServices) : base(dialogId)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
+            _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
 
             InitializeWaterfallDialog();
         }
 
+        public FlowDialog(string dialogId = null, BotStateService botStateService = null) : base(dialogId)
+        {
+            this.botStateService = botStateService;
+        }
 
         private void InitializeWaterfallDialog()
         {

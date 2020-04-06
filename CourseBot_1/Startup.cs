@@ -16,6 +16,7 @@ using Microsoft.Bot.Configuration;
 using CourseBot_1.Services;
 using Microsoft.Bot.Builder.Azure;
 using CourseBot_1.Dialogs;
+using Microsoft.BotBuilderSamples;
 
 namespace CourseBot_1
 {
@@ -70,6 +71,9 @@ namespace CourseBot_1
             services.AddSingleton<ConversationState>();
             //Create an instanc of the state service
             services.AddSingleton<BotStateService>();
+
+
+
         }
 
         public void ConfigureDialogs(IServiceCollection services)

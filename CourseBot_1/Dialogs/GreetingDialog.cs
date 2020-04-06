@@ -5,6 +5,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
+using Microsoft.BotBuilderSamples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,13 +18,14 @@ namespace CourseBot_1.Dialogs
     public class GreetingDialog : ComponentDialog //Component = for reusing dialogs like container
     {
 
-        private readonly BotStateService _botStateService; //Importing and injecting BotService to constructor down below
+        private readonly BotStateService _botStateService;
+        private readonly BotServices _botServices;
 
 
-        //DialogId = each dialog would have ID to indicate
-        public GreetingDialog(string dialogId, BotStateService botStateService) : base(dialogId)
+        public GreetingDialog(string dialogId,BotStateService botStateService, BotServices botServices) : base(dialogId)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
+            _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
 
             InitializeWaterfallDialog();
         }
@@ -47,10 +49,10 @@ namespace CourseBot_1.Dialogs
             };
 
             //Add Named Dialogs , adding to the bot's state bag
-            AddDialog(new FlowDialog($"{nameof(GreetingDialog)}.flowDialog", _botStateService));
+            AddDialog(new FlowDialog($"{nameof(GreetingDialog)}.flowDialog", _botStateService,_botServices));
             AddDialog(new WaterfallDialog($"{nameof(GreetingDialog)}.mainFlow", waterfallSteps));
-            AddDialog(new FinalDevDialog($"{nameof(GreetingDialog)}.final", _botStateService));
-            AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService));
+            AddDialog(new FinalDevDialog($"{nameof(GreetingDialog)}.final", _botStateService,_botServices));
+            AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService,_botServices));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.name"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement"));

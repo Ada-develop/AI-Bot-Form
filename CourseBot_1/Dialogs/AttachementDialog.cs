@@ -12,21 +12,28 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
+using Microsoft.BotBuilderSamples;
 
 namespace BotAttachment.Dialogs
 {
 
     public class AttachmentDialog : ComponentDialog
     {
-        private readonly BotStateService _botStateService; //Importing and injecting BotService to constructor down below
+        private readonly BotStateService _botStateService;
+        private readonly BotServices _botServices;
+        private BotStateService botStateService;
 
-
-        //DialogId = each dialog would have ID to indicate
-        public AttachmentDialog(string dialogId, BotStateService botStateService) : base(dialogId)
+        public AttachmentDialog(string v, BotStateService botStateService, BotServices botServices) : base(nameof(AttachmentDialog))
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
+            _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
 
             InitializeWaterfallDialog();
+        }
+
+        public AttachmentDialog(string dialogId, BotStateService botStateService = null) : base(dialogId)
+        {
+            this.botStateService = botStateService;
         }
 
         private void InitializeWaterfallDialog()
@@ -44,7 +51,7 @@ namespace BotAttachment.Dialogs
             };
 
             //Add Named Dialogs , adding to the bot's state bag
-            AddDialog(new FlowDialog($"{nameof(AttachmentDialog)}.flowDialog", _botStateService));
+            AddDialog(new FlowDialog($"{nameof(AttachmentDialog)}.flowDialog", _botStateService, _botServices));
             AddDialog(new WaterfallDialog($"{nameof(AttachmentDialog)}.mainFlow", waterfallSteps));
             AddDialog(new TextPrompt($"{nameof(AttachmentDialog)}.attachement"));
             AddDialog(new AttachmentPrompt(nameof(AttachmentPrompt), PicturePromptValidatorAsync));

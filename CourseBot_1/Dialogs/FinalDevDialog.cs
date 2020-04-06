@@ -4,6 +4,7 @@ using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
+using Microsoft.BotBuilderSamples;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,16 +19,18 @@ namespace CourseBot_1.Dialogs
     {
 
 
-        private readonly BotStateService _botStateService; //Importing and injecting BotService to constructor down below
+        private readonly BotStateService _botStateService;
+        private readonly BotServices _botServices;
+        private BotStateService botStateService;
 
-
-        //DialogId = each dialog would have ID to indicate
-        public FinalDevDialog(string dialogId, BotStateService botStateService) : base(dialogId)
+        public FinalDevDialog(string dialogId, BotStateService botStateService, BotServices botServices) : base(dialogId)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
+            _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
 
             InitializeWaterfallDialog();
         }
+
 
         private void InitializeWaterfallDialog()
         {
@@ -45,7 +48,7 @@ namespace CourseBot_1.Dialogs
             };
 
             //Add Named Dialogs , adding to the bot's state bag
-            AddDialog(new FlowDialog($"{nameof(FinalDevDialog)}.flowDialog", _botStateService));
+            AddDialog(new FlowDialog($"{nameof(FinalDevDialog)}.flowDialog", _botStateService,_botServices));
             AddDialog(new WaterfallDialog($"{nameof(FinalDevDialog)}.mainFlow", waterfallSteps));
             AddDialog(new TextPrompt($"{nameof(FinalDevDialog)}.tech"));
             AddDialog(new TextPrompt($"{nameof(FinalDevDialog)}.website", WebValidatorAsync));
