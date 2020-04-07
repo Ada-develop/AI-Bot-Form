@@ -23,7 +23,7 @@ namespace BotAttachment.Dialogs
         private readonly BotServices _botServices;
         private BotStateService botStateService;
 
-        public AttachmentDialog(string v, BotStateService botStateService, BotServices botServices) : base(nameof(AttachmentDialog))
+        public AttachmentDialog(string dialogId, BotStateService botStateService, BotServices botServices) : base(dialogId)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
             _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
@@ -70,13 +70,7 @@ namespace BotAttachment.Dialogs
             
             await stepContext.Context.SendActivityAsync(MessageFactory.Text("That is awesome! You can upload your screens below."), cancellationToken);
 
-            if (stepContext.Context.Activity.ChannelId == Channels.Msteams)
-            {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text("Skipping attachment prompt in Teams channel..."), cancellationToken);
-                return await stepContext.NextAsync(null, cancellationToken);
-            }
-            else
-            {
+           
                 var promptOptions = new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Please attach a project picture (or type any message to skip)."),
@@ -84,7 +78,7 @@ namespace BotAttachment.Dialogs
                 };
 
                 return await stepContext.PromptAsync(nameof(AttachmentPrompt), promptOptions, cancellationToken);
-            }
+            
         }
 
         private async Task<DialogTurnResult> ConfirmStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)

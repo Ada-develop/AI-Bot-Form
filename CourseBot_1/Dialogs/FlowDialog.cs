@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using System.Net.Mail;
 using Microsoft.Bot.Schema;
 using Microsoft.BotBuilderSamples;
+using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime.Models;
 
 namespace CourseBot_1.Dialogs
 {
@@ -42,6 +43,7 @@ namespace CourseBot_1.Dialogs
             var waterfallSteps = new WaterfallStep[]
             {
                 BudgetStepAsync,
+                BudgetLuisAsync,
                 DurationStepAsync,
                 StartworkStepAsync,
                 PriceHStepAsync,
@@ -79,6 +81,28 @@ namespace CourseBot_1.Dialogs
                 }, cancellationToken);
 
         }
+
+
+        private async Task<DialogTurnResult> BudgetLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+
+            if(topIntent.intent == "QueryBudget")
+            {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", topIntent.intent)), cancellationToken);
+
+            }
+
+            return await stepContext.NextAsync(null, cancellationToken);
+        }
+
+
 
         private async Task<DialogTurnResult> DurationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
