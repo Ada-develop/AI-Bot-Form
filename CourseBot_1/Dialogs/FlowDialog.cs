@@ -45,8 +45,10 @@ namespace CourseBot_1.Dialogs
                 BudgetStepAsync,
                 BudgetLuisAsync,
                 DurationStepAsync,
+                DurationLuisAsync,
                 StartworkStepAsync,
                 PriceHStepAsync,
+                PriceHLuisAsync,
                 CommentStepAsync,
                 EmailStepAsync,
                 PolicyStepAsync,
@@ -57,9 +59,9 @@ namespace CourseBot_1.Dialogs
             //Types of subdialogs
             AddDialog(new WaterfallDialog($"{nameof(FlowDialog)}.mainFlow", waterfallSteps)); 
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.budget"));
-            AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.duration"));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.duration"));
             AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.start"));
-            AddDialog(new ChoicePrompt($"{nameof(FlowDialog)}.priceH"));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.priceH"));
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.comment"));
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.email", EmailStepValidatorAsync));
             AddDialog(new ChoicePrompt($"{nameof(FlowDialog)}.policy"));
@@ -92,10 +94,10 @@ namespace CourseBot_1.Dialogs
             //Top Intent tell us which cognitive service to use
             var topIntent = recognizerResult.GetTopScoringIntent();
 
-
-            if(topIntent.intent == "QueryBudget")
+            // OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase
+            if (topIntent.intent == "QueryBudget")
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", topIntent.intent)), cancellationToken);
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I understood your's budget!")), cancellationToken);
 
             }
 
@@ -108,7 +110,7 @@ namespace CourseBot_1.Dialogs
         {
             stepContext.Values["budget"] = (string)stepContext.Result; //Saving value from previuos step
 
-            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration", //
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration", 
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What is the anticipated duration of the project?"),
@@ -116,15 +118,34 @@ namespace CourseBot_1.Dialogs
                 }, cancellationToken);
         }
 
+        private async Task<DialogTurnResult> DurationLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            // OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase
+            if (topIntent.intent == "QueryDuration")
+            {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I got it!")), cancellationToken);
+
+            }
+
+            return await stepContext.NextAsync(null, cancellationToken);
+        }
+
         private async Task<DialogTurnResult> StartworkStepAsync (WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             //Convertig string to the DateTime format
-            stepContext.Values["duration"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
+            stepContext.Values["duration"] = (string)stepContext.Result;
 
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.start",
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("How soon do you need your dev team to start working?"),
+                    Prompt = MessageFactory.Text("How soon do you need your dev team to start working? Just give me the exact date "),
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
         }
@@ -133,18 +154,41 @@ namespace CourseBot_1.Dialogs
         {
             //Convertig string to the DateTime format
             stepContext.Values["start"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
-
+            
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.priceH",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What price per hour are you expecting to pay to your future development team? "),
-                    Choices = ChoiceFactory.ToChoices(new List<string> { "30-45 $/h", "45-60 $/h", "60+ $/h" }),
+                    
                 }, cancellationToken);
+
+           
         }
+
+        private async Task<DialogTurnResult> PriceHLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            // OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase
+            if (topIntent.intent == "QueryBudget")
+            {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Cool! Get it!")), cancellationToken);
+
+            }
+
+            return await stepContext.NextAsync(null, cancellationToken);
+        }
+
+
 
         private async Task<DialogTurnResult> CommentStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["priceH"] = ((FoundChoice)stepContext.Result).Value;
+            stepContext.Values["priceH"] = (string)stepContext.Result;
 
 
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.comment",
