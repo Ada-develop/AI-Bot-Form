@@ -98,7 +98,19 @@ namespace CourseBot_1.Dialogs
             var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
 
 
-            if (qna != null && qna.Length > 0)
+            if (topIntent.intent == "QueryStageFinal")
+            {
+                return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
+            }
+            else if (topIntent.intent == "QueryStageMid")
+            {
+                return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
+            }
+            else if (topIntent.intent == "QueryStage")
+            {
+                return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
+            }
+            else if (qna != null && qna.Length > 0)
             {
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(qna[0].Answer), cancellationToken);
             }
