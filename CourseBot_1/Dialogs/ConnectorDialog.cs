@@ -3,6 +3,7 @@ using CourseBot_1.Dialogs;
 using CourseBot_1.Models;
 using CourseBot_1.Services;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.AI.QnA;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Dialogs.Choices;
 using Microsoft.Bot.Schema;
@@ -93,22 +94,37 @@ namespace CourseBot_1.Dialogs
             //Top Intent tell us which cognitive service to use
             var topIntent = recognizerResult.GetTopScoringIntent();
 
-            switch (topIntent.intent)
+            var options = new QnAMakerOptions { Top = 1 };
+            var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
+
+
+            if (qna != null && qna.Length > 0)
             {
-                case "QueryStageFinal":
-                    return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
-                case "QueryStageMid":
-                    return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
-                case "QueryStage":
-                    return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
-                default:
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text($"I'm sorry I don't know what you mean"), cancellationToken);
-                    break;
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(qna[0].Answer), cancellationToken);
             }
+            else
+            {
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text("No QnA Maker answers were found."), cancellationToken);
+            }
+
             return await stepContext.NextAsync(null, cancellationToken);
+
+            /*  switch (topIntent.intent)
+              {
+                  case "QueryStageFinal":
+                      return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
+                  case "QueryStageMid":
+                      return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
+                  case "QueryStage":
+                      return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
+                  default:
+                      await stepContext.Context.SendActivityAsync(MessageFactory.Text($"I'm sorry I don't know what you mean"), cancellationToken);
+                      break;
+              }
+              return await stepContext.NextAsync(null, cancellationToken);
+
+          */
         }
-
-
 
 
 
