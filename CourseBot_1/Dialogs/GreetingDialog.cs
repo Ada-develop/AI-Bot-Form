@@ -103,9 +103,14 @@ namespace CourseBot_1.Dialogs
                 //Save any state changes that might have occured during the turn.
 
                 await _botStateService.UserProfileAccessor.SetAsync(stepContext.Context, userProfile);
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice to meet you {0}. ", userProfile.Name)), cancellationToken);
+            }
+            else
+            {
+
+                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Welcome back! {0}. ", userProfile.Name)), cancellationToken);
             }
             //Comunication:
-            await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice to meet you {0}. ", userProfile.Name)), cancellationToken);
             return await stepContext.NextAsync(null, cancellationToken);
         }
 
