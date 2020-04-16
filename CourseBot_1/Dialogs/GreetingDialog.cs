@@ -42,9 +42,9 @@ namespace CourseBot_1.Dialogs
                 NameStepAsync,
                 NiceStepAsync,
                 OrganizationStepAsync,
-                OrganizationLuisAsync,
+                //OrganizationLuisAsync,
                 DevelopementStepAsync,
-                DevelopmentLuisAsync,
+               // DevelopmentLuisAsync,
                 BranchesStepAsync,
                 NextDialogasync,              
                 //SumStepAsync,
@@ -59,7 +59,7 @@ namespace CourseBot_1.Dialogs
             AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService,_botServices));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.name"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization", OrgValidatorAsync));
-            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement"));
+            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement", DevValidatorAsync ));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.branch"));
             // Set the starting Dialog 
 
@@ -67,6 +67,8 @@ namespace CourseBot_1.Dialogs
 
 
         }
+
+        
 
 
 
@@ -120,38 +122,71 @@ namespace CourseBot_1.Dialogs
 
     private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
             {
+            var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
 
-              stepContext.Values["organization"] = (string)stepContext.Result;
+
+            stepContext.Values["organization"] = (string)stepContext.Result;
 
              return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
                     new PromptOptions
                   {
                       Prompt = MessageFactory.Text("What type of organization do you represent?"),
-                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                     RetryPrompt = MessageFactory.Text("Invalid"),
                  }, cancellationToken);
 
-          }
+            
 
-     
-
-          
-
-        
+        }
 
 
 
-        private async Task<DialogTurnResult> OrganizationLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+
+
+
+
+
+
+        /* private async Task<DialogTurnResult> OrganizationLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+         {
+             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+             var luisResult = result.Properties["luisResult"] as LuisResult;
+             var entities = luisResult.Entities;
+             stepContext.Values["organization"] = (string)stepContext.Result;
+
+
+
+             foreach (var entity in entities)
+             {
+
+
+                 if (Common.OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
+                 {
+                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Wow ! {0}, I guess funny to work there!", entity.Entity)), cancellationToken);
+                 }
+                 else
+                 {
+                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
+                 }
+
+             }
+             return await stepContext.NextAsync(null, cancellationToken); 
+
+
+         }*/
+
+
+
+
+        private async Task<DialogTurnResult> DevelopementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
             var luisResult = result.Properties["luisResult"] as LuisResult;
             var entities = luisResult.Entities;
 
 
-
-
-            foreach(var entity in entities)
+            foreach (var entity in entities)
             {
-                
+
 
                 if (Common.OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -163,21 +198,12 @@ namespace CourseBot_1.Dialogs
                 }
 
             }
-            return await stepContext.NextAsync(null, cancellationToken); 
-            
-
-        }
 
 
 
 
-        private async Task<DialogTurnResult> DevelopementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
 
-
-            stepContext.Values["organization"] = (string)stepContext.Result;
-
-            return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
+            return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.developement",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Great! What type of project do you want to develop?"),
@@ -186,7 +212,7 @@ namespace CourseBot_1.Dialogs
             
         }
 
-        private async Task<DialogTurnResult> DevelopmentLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+       /* private async Task<DialogTurnResult> DevelopmentLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
             var luisResult = result.Properties["luisResult"] as LuisResult;
@@ -212,12 +238,33 @@ namespace CourseBot_1.Dialogs
             return await stepContext.NextAsync(null, cancellationToken);
 
 
-        }
+        }*/
 
         private async Task<DialogTurnResult> BranchesStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["developement"] = (string)stepContext.Result;
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
 
+
+
+
+            foreach (var entity in entities)
+            {
+
+
+                if (Common.DevType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
+                {
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", entity.Entity)), cancellationToken);
+                }
+                else
+                {
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
+                }
+
+            }
+            
             {
                 return await stepContext.PromptAsync($"{nameof(ConnectorDialog)}.branch",
                    new PromptOptions
@@ -249,6 +296,7 @@ namespace CourseBot_1.Dialogs
             // Dispatch model to determine which cognitive service to use LUIS or QnA
 
             var recognizerResult = await _botServices.Dispatch.RecognizeAsync(promptContext.Context, cancellationToken);
+            
 
             //Top Intent tell us which cognitive service to use
             var topIntent = recognizerResult.GetTopScoringIntent();
@@ -258,6 +306,25 @@ namespace CourseBot_1.Dialogs
             if (promptContext.Recognized.Succeeded)
             {
                 valid = topIntent.intent == "QueryOrg";
+            }
+           
+            return valid;
+        }
+
+        private async Task<bool> DevValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(promptContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            var valid = false;
+
+            if (promptContext.Recognized.Succeeded)
+            {
+                valid = topIntent.intent == "QueryDev";
             }
             return valid;
         }
