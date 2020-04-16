@@ -58,7 +58,7 @@ namespace CourseBot_1.Dialogs
             AddDialog(new FinalDevDialog($"{nameof(GreetingDialog)}.final", _botStateService,_botServices));
             AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService,_botServices));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.name"));
-            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization"));
+            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization", OrgValidatorAsync));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.branch"));
             // Set the starting Dialog 
@@ -69,12 +69,14 @@ namespace CourseBot_1.Dialogs
         }
 
 
+
+
         //Waterfall inject, checking or we have users name in userProfile , if don't have kicks PromptAsync  and Prompt for name
         //Else NextAsync
         private async Task<DialogTurnResult> NameStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             UserProfile userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile());
-
+            
             if (string.IsNullOrEmpty(userProfile.Name))
             {
                 return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.name",
@@ -114,18 +116,27 @@ namespace CourseBot_1.Dialogs
             return await stepContext.NextAsync(null, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            stepContext.Values["organization"] = (string)stepContext.Result;
 
-            return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
-                new PromptOptions
-                {
-                    Prompt = MessageFactory.Text("What type of organization do you represent?"),
-                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
-                }, cancellationToken);
 
-        }
+    private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+            {
+
+              stepContext.Values["organization"] = (string)stepContext.Result;
+
+             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
+                    new PromptOptions
+                  {
+                      Prompt = MessageFactory.Text("What type of organization do you represent?"),
+                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                 }, cancellationToken);
+
+          }
+
+     
+
+          
+
+        
 
 
 
@@ -162,6 +173,8 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> DevelopementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+
+
             stepContext.Values["organization"] = (string)stepContext.Result;
 
             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
@@ -228,10 +241,31 @@ namespace CourseBot_1.Dialogs
 
 
 
+        #region VALIDATORS
 
 
+        private async Task<bool> OrgValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
 
-            private async Task<DialogTurnResult> SumStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(promptContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            var valid = false;
+
+            if (promptContext.Recognized.Succeeded)
+            {
+                valid = topIntent.intent == "QueryOrg";
+            }
+            return valid;
+        }
+
+        #endregion
+
+
+        private async Task<DialogTurnResult> SumStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["branch"] = ((FoundChoice)stepContext.Result).Value;
 
