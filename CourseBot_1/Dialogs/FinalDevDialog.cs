@@ -71,7 +71,7 @@ namespace CourseBot_1.Dialogs
             return await stepContext.PromptAsync($"{nameof(FinalDevDialog)}.tech",
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("That is awesome! Please use the field below to describe the technologies you are using and the dev team you have.")
+                    Prompt = MessageFactory.Text("That is awesome! Can you describe the technologies you are using and the dev team you have.")
                 }, cancellationToken);
 
 

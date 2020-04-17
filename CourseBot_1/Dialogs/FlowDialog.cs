@@ -14,6 +14,7 @@ using System.Net.Mail;
 using Microsoft.Bot.Schema;
 using Microsoft.BotBuilderSamples;
 using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime.Models;
+using Microsoft.Bot.Builder.AI.QnA;
 
 namespace CourseBot_1.Dialogs
 {
@@ -32,10 +33,7 @@ namespace CourseBot_1.Dialogs
             InitializeWaterfallDialog();
         }
 
-        public FlowDialog(string dialogId = null, BotStateService botStateService = null) : base(dialogId)
-        {
-            this.botStateService = botStateService;
-        }
+
 
         private void InitializeWaterfallDialog()
         {
@@ -52,12 +50,12 @@ namespace CourseBot_1.Dialogs
                 CommentStepAsync,
                 EmailStepAsync,
                 PolicyStepAsync,
-                CancelAsync,
+                
                 //SummaryStepAsync
             };
 
             //Types of subdialogs
-            AddDialog(new WaterfallDialog($"{nameof(FlowDialog)}.mainFlow", waterfallSteps)); 
+            AddDialog(new WaterfallDialog($"{nameof(FlowDialog)}.mainFlow", waterfallSteps));
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.budget"));
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.duration"));
             AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.start"));
@@ -66,7 +64,7 @@ namespace CourseBot_1.Dialogs
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.email", EmailStepValidatorAsync));
             AddDialog(new ChoicePrompt($"{nameof(FlowDialog)}.policy"));
 
-            
+
             //Set the starting Dialog
             InitialDialogId = $"{nameof(FlowDialog)}.mainFlow";
 
@@ -110,7 +108,7 @@ namespace CourseBot_1.Dialogs
         {
             stepContext.Values["budget"] = (string)stepContext.Result; //Saving value from previuos step
 
-            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration", 
+            return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What is the anticipated duration of the project?"),
@@ -137,7 +135,7 @@ namespace CourseBot_1.Dialogs
             return await stepContext.NextAsync(null, cancellationToken);
         }
 
-        private async Task<DialogTurnResult> StartworkStepAsync (WaterfallStepContext stepContext, CancellationToken cancellationToken)
+        private async Task<DialogTurnResult> StartworkStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             //Convertig string to the DateTime format
             stepContext.Values["duration"] = (string)stepContext.Result;
@@ -154,15 +152,15 @@ namespace CourseBot_1.Dialogs
         {
             //Convertig string to the DateTime format
             stepContext.Values["start"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
-            
+
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.priceH",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What price per hour are you expecting to pay to your future development team? "),
-                    
+
                 }, cancellationToken);
 
-           
+
         }
 
         private async Task<DialogTurnResult> PriceHLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -225,35 +223,12 @@ namespace CourseBot_1.Dialogs
                 }, cancellationToken);
         }
 
-        
 
-        private async Task<DialogTurnResult> CancelAsync( WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            var userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile(), cancellationToken);
 
-            stepContext.Values["policy"] = ((FoundChoice)stepContext.Result).Value;
-            if (stepContext.Context.Activity.Type == ActivityTypes.Message)
-            {
-                var text = stepContext.Context.Activity.Text.ToLowerInvariant();
+       
+    
 
-                switch (text)
-                {
-                    case "help":
-                    case "?":
-                        var helpMessage = MessageFactory.Text("Helper");
-                        await stepContext.Context.SendActivityAsync(helpMessage, cancellationToken);
-                        return new DialogTurnResult(DialogTurnStatus.Waiting);
 
-                    case "cancel":
-                    case "quit":
-                        var cancelMessage = MessageFactory.Text("Canceling...");
-                        await stepContext.Context.SendActivityAsync(cancelMessage, cancellationToken);
-                        return await stepContext.CancelAllDialogsAsync(cancellationToken);
-                }
-                
-            }
-            return await stepContext.EndDialogAsync(cancellationToken: cancellationToken);
-        }
         
 
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)

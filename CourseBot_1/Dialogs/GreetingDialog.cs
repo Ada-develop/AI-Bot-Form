@@ -32,6 +32,8 @@ namespace CourseBot_1.Dialogs
             InitializeWaterfallDialog();
         }
 
+
+        #region Waterfall and dialog saved data
         private void InitializeWaterfallDialog()
         {
 
@@ -42,9 +44,7 @@ namespace CourseBot_1.Dialogs
                 NameStepAsync,
                 NiceStepAsync,
                 OrganizationStepAsync,
-                //OrganizationLuisAsync,
                 DevelopementStepAsync,
-               // DevelopmentLuisAsync,
                 BranchesStepAsync,
                 NextDialogasync,              
                 //SumStepAsync,
@@ -67,9 +67,9 @@ namespace CourseBot_1.Dialogs
 
 
         }
+        #endregion
 
-        
-
+        #region WATERFALL
 
 
 
@@ -141,42 +141,6 @@ namespace CourseBot_1.Dialogs
 
 
 
-
-
-
-
-
-        /* private async Task<DialogTurnResult> OrganizationLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-         {
-             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
-             var luisResult = result.Properties["luisResult"] as LuisResult;
-             var entities = luisResult.Entities;
-             stepContext.Values["organization"] = (string)stepContext.Result;
-
-
-
-             foreach (var entity in entities)
-             {
-
-
-                 if (Common.OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
-                 {
-                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Wow ! {0}, I guess funny to work there!", entity.Entity)), cancellationToken);
-                 }
-                 else
-                 {
-                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
-                 }
-
-             }
-             return await stepContext.NextAsync(null, cancellationToken); 
-
-
-         }*/
-
-
-
-
         private async Task<DialogTurnResult> DevelopementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
@@ -194,7 +158,7 @@ namespace CourseBot_1.Dialogs
                 }
                 else
                 {
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
+                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
                 }
 
             }
@@ -212,33 +176,7 @@ namespace CourseBot_1.Dialogs
             
         }
 
-       /* private async Task<DialogTurnResult> DevelopmentLuisAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
-            var luisResult = result.Properties["luisResult"] as LuisResult;
-            var entities = luisResult.Entities;
-
-
-
-
-            foreach (var entity in entities)
-            {
-
-
-                if (Common.DevType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
-                {
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", entity.Entity)), cancellationToken);
-                }
-                else
-                {
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
-                }
-
-            }
-            return await stepContext.NextAsync(null, cancellationToken);
-
-
-        }*/
+      
 
         private async Task<DialogTurnResult> BranchesStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
@@ -278,7 +216,7 @@ namespace CourseBot_1.Dialogs
         }
 
 
-
+        #endregion
 
 
         private async Task<DialogTurnResult> NextDialogasync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -332,6 +270,8 @@ namespace CourseBot_1.Dialogs
         #endregion
 
 
+        #region Don't used part 
+        /// Don't used part : 
         private async Task<DialogTurnResult> SumStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             stepContext.Values["branch"] = ((FoundChoice)stepContext.Result).Value;
@@ -359,7 +299,7 @@ namespace CourseBot_1.Dialogs
 
             return await stepContext.BeginDialogAsync(nameof(FlowDialog),null,cancellationToken);
         }
-
+        #endregion
 
     }
 }
