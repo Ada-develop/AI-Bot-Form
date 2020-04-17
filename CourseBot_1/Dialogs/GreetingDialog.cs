@@ -125,7 +125,6 @@ namespace CourseBot_1.Dialogs
             var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
 
 
-            stepContext.Values["organization"] = (string)stepContext.Result;
 
              return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
                     new PromptOptions
@@ -143,6 +142,8 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> DevelopementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+            
+
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
             var luisResult = result.Properties["luisResult"] as LuisResult;
             var entities = luisResult.Entities;
@@ -155,6 +156,7 @@ namespace CourseBot_1.Dialogs
                 if (Common.OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
                 {
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Wow ! {0}, I guess funny to work there!", entity.Entity)), cancellationToken);
+                    stepContext.Values["organization"] = (string)stepContext.Result == entity.Entity;
                 }
                 else
                 {
@@ -180,7 +182,7 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> BranchesStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["developement"] = (string)stepContext.Result;
+            
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
             var luisResult = result.Properties["luisResult"] as LuisResult;
             var entities = luisResult.Entities;
@@ -195,6 +197,7 @@ namespace CourseBot_1.Dialogs
                 if (Common.DevType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
                 {
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", entity.Entity)), cancellationToken);
+                    stepContext.Values["developement"] = (string)stepContext.Result == entity.Entity;
                 }
                 else
                 {
