@@ -24,7 +24,7 @@ namespace CourseBot_1.Dialogs
         private readonly BotServices _botServices;
 
 
-        public GreetingDialog(string dialogId,BotStateService botStateService, BotServices botServices) : base(dialogId)
+        public GreetingDialog(string dialogId, BotStateService botStateService, BotServices botServices) : base(dialogId)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
             _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
@@ -40,7 +40,7 @@ namespace CourseBot_1.Dialogs
             //Create Waterfall Steps | Bot's state bag
             var waterfallSteps = new WaterfallStep[]
             {
-                
+
                 NameStepAsync,
                 NiceStepAsync,
                 OrganizationStepAsync,
@@ -53,14 +53,17 @@ namespace CourseBot_1.Dialogs
             };
 
             //Add Named Dialogs , adding to the bot's state bag
-            AddDialog(new FlowDialog($"{nameof(GreetingDialog)}.flowDialog", _botStateService,_botServices));
+            AddDialog(new FlowDialog($"{nameof(GreetingDialog)}.flowDialog", _botStateService, _botServices));
             AddDialog(new WaterfallDialog($"{nameof(GreetingDialog)}.mainFlow", waterfallSteps));
-            AddDialog(new FinalDevDialog($"{nameof(GreetingDialog)}.final", _botStateService,_botServices));
-            AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService,_botServices));
+            AddDialog(new FinalDevDialog($"{nameof(GreetingDialog)}.final", _botStateService, _botServices));
+            AddDialog(new AttachmentDialog($"{nameof(GreetingDialog)}.attach", _botStateService, _botServices));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.name"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization", OrgValidatorAsync));
-            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement", DevValidatorAsync ));
+            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement", DevValidatorAsync));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.branch"));
+
+            //AddDialog(new QnADialog($"{ nameof(GreetingDialog)}.qna"));
+            
             // Set the starting Dialog 
 
             InitialDialogId = $"{nameof(GreetingDialog)}.mainFlow";
@@ -78,7 +81,7 @@ namespace CourseBot_1.Dialogs
         private async Task<DialogTurnResult> NameStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             UserProfile userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile());
-            
+
             if (string.IsNullOrEmpty(userProfile.Name))
             {
                 return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.name",
@@ -93,8 +96,11 @@ namespace CourseBot_1.Dialogs
             }
         }
 
+
+
        
 
+    
 
         private async Task<DialogTurnResult> NiceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
@@ -123,7 +129,8 @@ namespace CourseBot_1.Dialogs
     private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
             {
 
-
+            
+           
             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
                     new PromptOptions
                   {
@@ -145,6 +152,12 @@ namespace CourseBot_1.Dialogs
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
             var luisResult = result.Properties["luisResult"] as LuisResult;
             var entities = luisResult.Entities;
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+            
+
+
 
 
             foreach (var entity in entities)
@@ -225,7 +238,7 @@ namespace CourseBot_1.Dialogs
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
-
+        
 
         #region VALIDATORS
 
@@ -263,7 +276,7 @@ namespace CourseBot_1.Dialogs
 
             if (promptContext.Recognized.Succeeded)
             {
-                valid = topIntent.intent == "QueryDev";
+                valid = topIntent.intent == "QueryDev" && topIntent.score >= 0.6;
             }
             return valid;
         }

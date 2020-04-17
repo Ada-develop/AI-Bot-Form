@@ -106,7 +106,9 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> DurationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["budget"] = (string)stepContext.Result; //Saving value from previuos step
+
+
+            stepContext.Values["budget"] = (string)stepContext.Options; //Saving value from previuos step
 
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration",
                 new PromptOptions

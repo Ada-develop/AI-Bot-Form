@@ -10,13 +10,13 @@ using Microsoft.Extensions.Logging;
 
 namespace CourseBot_1.Dialogs
 {
-    public class QnABot : ActivityHandler
+    public class QnADialog : ActivityHandler
     {
         private readonly IConfiguration _configuration;
-        private readonly ILogger<QnABot> _logger;
+        private readonly ILogger<QnADialog> _logger;
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public QnABot(IConfiguration configuration, ILogger<QnABot> logger, IHttpClientFactory httpClientFactory)
+        public QnADialog(IConfiguration configuration, ILogger<QnADialog> logger, IHttpClientFactory httpClientFactory)
         {
             _configuration = configuration;
             _logger = logger;
