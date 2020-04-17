@@ -67,17 +67,6 @@ namespace CourseBot_1.Dialogs
 
         }
 
-        private async Task<DialogTurnResult> QuestionAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-            return await stepContext.PromptAsync($"{nameof(ConnectorDialog)}.branch",
-               new PromptOptions
-               {
-                   Prompt = MessageFactory.Text("OK. What is the current stage of your project? "),
-                   RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
-
-               }, cancellationToken);
-
-        }
 
 
 
@@ -112,12 +101,14 @@ namespace CourseBot_1.Dialogs
             }
             else if (qna != null && qna.Length > 0)
             {
+ 
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(qna[0].Answer), cancellationToken);
+                return  new DialogTurnResult(DialogTurnStatus.CompleteAndWait) ;
             }
-            else
+         /*   else
             {
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text("No QnA Maker answers were found."), cancellationToken);
-            }
+            }*/
 
             return await stepContext.NextAsync(null, cancellationToken);
 

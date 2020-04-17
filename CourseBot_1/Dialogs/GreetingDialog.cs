@@ -122,11 +122,9 @@ namespace CourseBot_1.Dialogs
 
     private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
             {
-            var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
 
 
-
-             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
+            return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
                     new PromptOptions
                   {
                       Prompt = MessageFactory.Text("What type of organization do you represent?"),
