@@ -49,10 +49,6 @@
       "roles": []
     },
     {
-      "name": "DevType",
-      "roles": []
-    },
-    {
       "name": "Duration",
       "roles": []
     },
@@ -68,20 +64,135 @@
     {
       "name": "MediumStage",
       "roles": []
-    },
-    {
-      "name": "OrganizationType",
-      "roles": [
-        "sme",
-        "startup"
-      ]
     }
   ],
   "composites": [],
-  "closedLists": [],
+  "closedLists": [
+    {
+      "name": "DevType",
+      "subLists": [
+        {
+          "canonicalForm": "Game",
+          "list": [
+            "video game",
+            "mobile game",
+            "game app",
+            "game application",
+            "computer game"
+          ]
+        },
+        {
+          "canonicalForm": "software",
+          "list": [
+            "program"
+          ]
+        },
+        {
+          "canonicalForm": "Desktop",
+          "list": [
+            "desktop software",
+            "desktop application"
+          ]
+        },
+        {
+          "canonicalForm": "DevOps",
+          "list": [
+            "Infrastructure",
+            "system"
+          ]
+        },
+        {
+          "canonicalForm": "ML",
+          "list": [
+            "Machine learning",
+            "AI",
+            "artificial inlligence"
+          ]
+        },
+        {
+          "canonicalForm": "mobile",
+          "list": [
+            "mobile app",
+            "mobile application",
+            "phone app",
+            "phone application",
+            "app"
+          ]
+        },
+        {
+          "canonicalForm": "Web",
+          "list": [
+            "Website",
+            "web app",
+            "web application",
+            "web site",
+            "marketing"
+          ]
+        },
+        {
+          "canonicalForm": "IoT",
+          "list": [
+            "internet of things",
+            "gadget software",
+            "gadget"
+          ]
+        }
+      ],
+      "roles": []
+    },
+    {
+      "name": "OrganizationType",
+      "subLists": [
+        {
+          "canonicalForm": "Solo",
+          "list": [
+            "solo",
+            "founder",
+            "solo founder"
+          ]
+        },
+        {
+          "canonicalForm": "enterprise",
+          "list": [
+            "company",
+            "buisness"
+          ]
+        },
+        {
+          "canonicalForm": "startup",
+          "list": [
+            "bootstrap",
+            "project"
+          ]
+        },
+        {
+          "canonicalForm": "ngo",
+          "list": [
+            "non goverement organization",
+            "organization"
+          ]
+        },
+        {
+          "canonicalForm": "sme",
+          "list": [
+            "small company",
+            "small organization",
+            "medium company",
+            "medium organization",
+            "firm"
+          ]
+        }
+      ],
+      "roles": []
+    }
+  ],
   "patternAnyEntities": [],
   "regex_entities": [],
   "prebuiltEntities": [
+    {
+      "name": "datetimeV2",
+      "roles": []
+    },
     {
       "name": "email",
       "roles": []
@@ -140,6 +251,11 @@
       ]
     },
     {
+      "text": "100$ k",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
       "text": "11 months",
       "intent": "QueryDuration",
       "entities": [
@@ -162,7 +278,17 @@
       ]
     },
     {
+      "text": "30$",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
       "text": "30$ /h",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
+      "text": "30$ k",
       "intent": "QueryBudget",
       "entities": []
     },
@@ -266,6 +392,21 @@
       ]
     },
     {
+      "text": "about 10$",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
+      "text": "about 100$",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
+      "text": "about 100$ k",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
       "text": "about 2 months",
       "intent": "QueryDuration",
       "entities": [
@@ -282,35 +423,18 @@
       "entities": []
     },
     {
-      "text": "afds",
-      "intent": "None",
+      "text": "app",
+      "intent": "QueryDev",
       "entities": []
     },
     {
       "text": "application",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 10
-        }
-      ]
+      "entities": []
     },
     {
       "text": "are you able to create a devops?",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 25,
-          "endPos": 30
-        }
-      ]
-    },
-    {
-      "text": "asd",
-      "intent": "None",
       "entities": []
     },
     {
@@ -331,24 +455,12 @@
     {
       "text": "can you develop desktop application?",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 16,
-          "endPos": 22
-        }
-      ]
+      "entities": []
     },
     {
       "text": "can you develop iot?",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 16,
-          "endPos": 18
-        }
-      ]
+      "entities": []
     },
     {
       "text": "can you help me>",
@@ -363,35 +475,27 @@
     {
       "text": "desktop",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 6
-        }
-      ]
+      "entities": []
     },
     {
       "text": "desktop app",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 6
-        }
-      ]
+      "entities": []
     },
     {
       "text": "devops",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 5
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "do you love me/",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "do you love me?",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "do you really care?",
@@ -402,6 +506,17 @@
       "text": "enterprise",
       "intent": "QueryOrg",
       "entities": []
+    },
+    {
+      "text": "few months",
+      "intent": "QueryDuration",
+      "entities": [
+        {
+          "entity": "Duration",
+          "startPos": 0,
+          "endPos": 9
+        }
+      ]
     },
     {
       "text": "final",
@@ -447,13 +562,7 @@
     {
       "text": "game",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 3
-        }
-      ]
+      "entities": []
     },
     {
       "text": "good evening",
@@ -486,70 +595,44 @@
       "entities": []
     },
     {
+      "text": "https://www.google.com",
+      "intent": "QueryWeb",
+      "entities": []
+    },
+    {
       "text": "i am founded startup",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 13,
-          "endPos": 19
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i am from medium company",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 10,
-          "endPos": 15
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i am from small company",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 10,
-          "endPos": 14
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i am represent a large enterprise company",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 17,
-          "endPos": 32
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i am represent ngo",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 15,
-          "endPos": 17
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i am solo",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 5,
-          "endPos": 8
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "i can pay about 100k $",
+      "intent": "QueryBudget",
+      "entities": []
     },
     {
       "text": "i can pay about 30k",
@@ -585,24 +668,12 @@
     {
       "text": "i founded startup",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 10,
-          "endPos": 16
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i from startup foundation",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 7,
-          "endPos": 13
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i have defined the functionality and have some done",
@@ -621,69 +692,90 @@
       ]
     },
     {
+      "text": "i have working product",
+      "intent": "QueryStageFinal",
+      "entities": [
+        {
+          "entity": "MediumStage",
+          "startPos": 7,
+          "endPos": 21
+        }
+      ]
+    },
+    {
+      "text": "i love pancake",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i love pancakes",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "i love you",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "i plan to spent",
+      "intent": "QueryBudget",
+      "entities": []
+    },
+    {
+      "text": "i plan to spent about 30$ k",
       "intent": "QueryBudget",
       "entities": []
     },
     {
       "text": "i represent a small company",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 14,
-          "endPos": 18
-        },
-        {
-          "entity": "OrganizationType",
-          "startPos": 20,
-          "endPos": 26
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "i represent a startip",
+      "intent": "QueryOrg",
+      "entities": []
     },
     {
       "text": "i represent a startup team",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 14,
-          "endPos": 20
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i represent enterprise",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 12,
-          "endPos": 21
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "i represent solo founation",
+      "intent": "QueryOrg",
+      "entities": []
+    },
+    {
+      "text": "i represent solo foundation",
+      "intent": "QueryOrg",
+      "entities": []
+    },
+    {
+      "text": "i represent solo organization",
+      "intent": "QueryOrg",
+      "entities": []
     },
     {
       "text": "i represent startup",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 12,
-          "endPos": 18
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i represent startup foundation",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 12,
-          "endPos": 18
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "i think kinda funny work in company so i from there",
+      "intent": "QueryOrg",
+      "entities": []
     },
     {
       "text": "i think we on the final stage",
@@ -699,6 +791,29 @@
           "role": "final stage",
           "startPos": 18,
           "endPos": 28
+        }
+      ]
+    },
+    {
+      "text": "i think we on the final stage near and i want your team to improve my product",
+      "intent": "QueryStageFinal",
+      "entities": [
+        {
+          "entity": "MediumStage",
+          "startPos": 18,
+          "endPos": 22
+        },
+        {
+          "entity": "Final",
+          "role": "final stage",
+          "startPos": 18,
+          "endPos": 28
+        },
+        {
+          "entity": "Final",
+          "role": "improve product",
+          "startPos": 59,
+          "endPos": 76
         }
       ]
     },
@@ -728,117 +843,79 @@
     {
       "text": "i want create a mobile application",
       "intent": "QueryDev",
+      "entities": []
+    },
+    {
+      "text": "i want improve my product",
+      "intent": "QueryStageFinal",
       "entities": [
         {
-          "entity": "DevType",
-          "startPos": 23,
-          "endPos": 33
+          "entity": "Final",
+          "role": "improve product",
+          "startPos": 7,
+          "endPos": 24
         }
       ]
+    },
+    {
+      "text": "i want mobile app",
+      "intent": "QueryDev",
+      "entities": []
     },
     {
       "text": "i want to create a game",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 19,
-          "endPos": 22
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want to create application",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 17,
-          "endPos": 27
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want to create web application",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 17,
-          "endPos": 19
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want to develop a game",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 20,
-          "endPos": 23
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want to develop game",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 18,
-          "endPos": 21
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "i want to develop software",
+      "intent": "QueryDev",
+      "entities": []
+    },
+    {
+      "text": "i want to talk with you",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "i want you to create mobile app",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 21,
-          "endPos": 26
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want you to develop a web site",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 24,
-          "endPos": 31
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want you to develop me a game",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 27,
-          "endPos": 30
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want you to develop me a mobile app",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 27,
-          "endPos": 32
-        },
-        {
-          "entity": "DevType",
-          "startPos": 34,
-          "endPos": 36
-        }
-      ]
+      "entities": []
     },
     {
       "text": "i want your team to develop",
@@ -881,6 +958,11 @@
       "entities": []
     },
     {
+      "text": "i work in startup foundation",
+      "intent": "QueryOrg",
+      "entities": []
+    },
+    {
       "text": "in the middle",
       "intent": "QueryStageMid",
       "entities": []
@@ -888,18 +970,12 @@
     {
       "text": "infractructure devops",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 13
-        },
-        {
-          "entity": "DevType",
-          "startPos": 15,
-          "endPos": 20
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "k",
+      "intent": "None",
+      "entities": []
     },
     {
       "text": "lol",
@@ -909,18 +985,7 @@
     {
       "text": "machine learning artificial intelligance",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 15
-        },
-        {
-          "entity": "DevType",
-          "startPos": 17,
-          "endPos": 39
-        }
-      ]
+      "entities": []
     },
     {
       "text": "maybe 3 months",
@@ -947,18 +1012,7 @@
     {
       "text": "mobile app",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 5
-        },
-        {
-          "entity": "DevType",
-          "startPos": 7,
-          "endPos": 9
-        }
-      ]
+      "entities": []
     },
     {
       "text": "month",
@@ -982,6 +1036,11 @@
       "entities": []
     },
     {
+      "text": "nepomniu",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "ngo",
       "intent": "QueryOrg",
       "entities": []
@@ -994,33 +1053,11 @@
     {
       "text": "ok, i represent startup foundation",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 16,
-          "endPos": 22
-        }
-      ]
+      "entities": []
     },
     {
       "text": "our web site is https://www.google.com",
       "intent": "QueryWeb",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 4,
-          "endPos": 11
-        }
-      ]
-    },
-    {
-      "text": "qna",
-      "intent": "None",
-      "entities": []
-    },
-    {
-      "text": "sad",
-      "intent": "None",
       "entities": []
     },
     {
@@ -1037,35 +1074,22 @@
     {
       "text": "software",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 7
-        }
-      ]
+      "entities": []
     },
     {
       "text": "solo",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 0,
-          "endPos": 3
-        }
-      ]
+      "entities": []
+    },
+    {
+      "text": "something like mobile app",
+      "intent": "QueryDev",
+      "entities": []
     },
     {
       "text": "startup",
       "intent": "QueryOrg",
-      "entities": [
-        {
-          "entity": "OrganizationType",
-          "startPos": 0,
-          "endPos": 6
-        }
-      ]
+      "entities": []
     },
     {
       "text": "tell me a joke",
@@ -1073,15 +1097,14 @@
       "entities": []
     },
     {
+      "text": "tell me a joke?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "the game",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 4,
-          "endPos": 7
-        }
-      ]
+      "entities": []
     },
     {
       "text": "we begin project",
@@ -1091,6 +1114,17 @@
           "entity": "MediumStage",
           "startPos": 3,
           "endPos": 15
+        }
+      ]
+    },
+    {
+      "text": "we have done a lot",
+      "intent": "QueryStageMid",
+      "entities": [
+        {
+          "entity": "MediumStage",
+          "startPos": 8,
+          "endPos": 13
         }
       ]
     },
@@ -1150,6 +1184,23 @@
       ]
     },
     {
+      "text": "we on the final stage",
+      "intent": "QueryStageFinal",
+      "entities": [
+        {
+          "entity": "MediumStage",
+          "startPos": 10,
+          "endPos": 14
+        },
+        {
+          "entity": "Final",
+          "role": "final stage",
+          "startPos": 10,
+          "endPos": 20
+        }
+      ]
+    },
+    {
       "text": "we on the final stage of the project",
       "intent": "QueryStageFinal",
       "entities": [
@@ -1189,6 +1240,16 @@
       "entities": []
     },
     {
+      "text": "we want to create an mobile app",
+      "intent": "QueryDev",
+      "entities": []
+    },
+    {
+      "text": "we want you to do everything",
+      "intent": "QueryStage",
+      "entities": []
+    },
+    {
       "text": "we want your team to create",
       "intent": "QueryStage",
       "entities": [
@@ -1202,24 +1263,12 @@
     {
       "text": "web app",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 6
-        }
-      ]
+      "entities": []
     },
     {
       "text": "website",
       "intent": "QueryDev",
-      "entities": [
-        {
-          "entity": "DevType",
-          "startPos": 0,
-          "endPos": 6
-        }
-      ]
+      "entities": []
     },
     {
       "text": "week",
@@ -1233,12 +1282,22 @@
       ]
     },
     {
+      "text": "what means invalid?",
+      "intent": "None",
+      "entities": []
+    },
+    {
       "text": "whats up",
       "intent": "Greeting",
       "entities": []
     },
     {
       "text": "where do you live?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "where is my cookies?",
       "intent": "None",
       "entities": []
     },
@@ -1250,6 +1309,16 @@
     {
       "text": "yo",
       "intent": "Greeting",
+      "entities": []
+    },
+    {
+      "text": "you are really want to know?",
+      "intent": "None",
+      "entities": []
+    },
+    {
+      "text": "you really give a fuck?",
+      "intent": "None",
       "entities": []
     }
   ],

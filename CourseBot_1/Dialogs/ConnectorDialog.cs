@@ -87,15 +87,15 @@ namespace CourseBot_1.Dialogs
             var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
 
 
-            if (topIntent.intent == "QueryStageFinal" && topIntent.score >= 0.6)
+            if (topIntent.intent == "QueryStageFinal" && topIntent.score >= 0.45)
             {
                 return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
             }
-            else if (topIntent.intent == "QueryStageMid" && topIntent.score >= 0.6)
+            else if (topIntent.intent == "QueryStageMid" && topIntent.score >= 0.45)
             {
                 return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
             }
-            else if (topIntent.intent == "QueryStage" && topIntent.score >= 0.6)
+            else if (topIntent.intent == "QueryStage" && topIntent.score >= 0.45)
             {
                 return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
             }
@@ -105,28 +105,11 @@ namespace CourseBot_1.Dialogs
                 await stepContext.Context.SendActivityAsync(MessageFactory.Text(qna[0].Answer), cancellationToken);
                 return  new DialogTurnResult(DialogTurnStatus.Waiting) ;
             }
-         /*   else
-            {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text("No QnA Maker answers were found."), cancellationToken);
-            }*/
+         
 
             return await stepContext.NextAsync(null, cancellationToken);
 
-            /*  switch (topIntent.intent)
-              {
-                  case "QueryStageFinal":
-                      return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
-                  case "QueryStageMid":
-                      return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
-                  case "QueryStage":
-                      return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
-                  default:
-                      await stepContext.Context.SendActivityAsync(MessageFactory.Text($"I'm sorry I don't know what you mean"), cancellationToken);
-                      break;
-              }
-              return await stepContext.NextAsync(null, cancellationToken);
-
-          */
+           
         }
 
 

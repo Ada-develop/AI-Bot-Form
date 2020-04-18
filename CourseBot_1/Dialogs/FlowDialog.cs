@@ -56,10 +56,10 @@ namespace CourseBot_1.Dialogs
 
             //Types of subdialogs
             AddDialog(new WaterfallDialog($"{nameof(FlowDialog)}.mainFlow", waterfallSteps));
-            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.budget"));
-            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.duration"));
-            AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.start"));
-            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.priceH"));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.budget", BudgetValidatorAsync));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.duration", DurationValidatorAsync));
+            AddDialog(new DateTimePrompt($"{nameof(FlowDialog)}.start" ));
+            AddDialog(new TextPrompt($"{nameof(FlowDialog)}.priceH", BudgetValidatorAsync));
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.comment"));
             AddDialog(new TextPrompt($"{nameof(FlowDialog)}.email", EmailStepValidatorAsync));
             AddDialog(new ChoicePrompt($"{nameof(FlowDialog)}.policy"));
@@ -77,7 +77,8 @@ namespace CourseBot_1.Dialogs
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.budget",
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("Do you have a budget in mind?")
+                    Prompt = MessageFactory.Text("Do you have a budget in mind?"),
+                    RetryPrompt = MessageFactory.Text("Invalid, till QnA")
                 }, cancellationToken);
 
         }
@@ -87,16 +88,32 @@ namespace CourseBot_1.Dialogs
         {
             // Dispatch model to determine which cognitive service to use LUIS or QnA
 
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
             var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
-
             //Top Intent tell us which cognitive service to use
             var topIntent = recognizerResult.GetTopScoringIntent();
-
             // OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase
+
             if (topIntent.intent == "QueryBudget")
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I understood your's budget!")), cancellationToken);
+                
+                foreach (var entity in luisResult.Entities)
+                {
+                    if (entity.Type == "money")
+                    {
+                       stepContext.Values["budget"] = (string)stepContext.Result == entity.Entity;
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I understood your's budget!")), cancellationToken);
 
+
+                    }
+                    else
+                    {
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
+                    }
+
+                }
             }
 
             return await stepContext.NextAsync(null, cancellationToken);
@@ -105,16 +122,13 @@ namespace CourseBot_1.Dialogs
 
 
         private async Task<DialogTurnResult> DurationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-        {
-
-
-            stepContext.Values["budget"] = (string)stepContext.Options; //Saving value from previuos step
+        { 
 
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.duration",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What is the anticipated duration of the project?"),
-                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                    RetryPrompt = MessageFactory.Text("Invalid, till QnA"),
                 }, cancellationToken);
         }
 
@@ -122,16 +136,31 @@ namespace CourseBot_1.Dialogs
         {
             // Dispatch model to determine which cognitive service to use LUIS or QnA
 
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
             var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
-
             //Top Intent tell us which cognitive service to use
             var topIntent = recognizerResult.GetTopScoringIntent();
 
-            // OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase
+
             if (topIntent.intent == "QueryDuration")
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I got it!")), cancellationToken);
+                foreach (var entity in luisResult.Entities)
+                {
+                    if (entity.Type == "Duration")
+                    {
+                        stepContext.Values["duration"] = (string)stepContext.Result == entity.Entity;
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I got it!")), cancellationToken);
 
+
+                    }
+                    else
+                    {
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
+                    }
+
+                }
             }
 
             return await stepContext.NextAsync(null, cancellationToken);
@@ -139,6 +168,8 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> StartworkStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+
+
             //Convertig string to the DateTime format
             stepContext.Values["duration"] = (string)stepContext.Result;
 
@@ -155,6 +186,17 @@ namespace CourseBot_1.Dialogs
             //Convertig string to the DateTime format
             stepContext.Values["start"] = Convert.ToDateTime(((List<DateTimeResolution>)stepContext.Result).FirstOrDefault().Value);
 
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+
+
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.priceH",
                 new PromptOptions
                 {
@@ -169,17 +211,35 @@ namespace CourseBot_1.Dialogs
         {
             // Dispatch model to determine which cognitive service to use LUIS or QnA
 
+            var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
+            var luisResult = result.Properties["luisResult"] as LuisResult;
+            var entities = luisResult.Entities;
             var recognizerResult = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
-
             //Top Intent tell us which cognitive service to use
             var topIntent = recognizerResult.GetTopScoringIntent();
 
-            // OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase
             if (topIntent.intent == "QueryBudget")
             {
-                await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Cool! Get it!")), cancellationToken);
 
+                foreach (var entity in luisResult.Entities)
+                {
+                    if (entity.Type == "money")
+                    {
+                        stepContext.Values["priceH"] = (string)stepContext.Result == entity.Entity;
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Cool! Get it!")), cancellationToken);
+
+
+                    }
+                    else
+                    {
+                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
+                    }
+
+                }
             }
+
+
+          
 
             return await stepContext.NextAsync(null, cancellationToken);
         }
@@ -288,8 +348,42 @@ namespace CourseBot_1.Dialogs
         }
 
 
-        
 
+        private async Task<bool> BudgetValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(promptContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            var valid = false;
+
+            if (promptContext.Recognized.Succeeded)
+            {
+                valid = topIntent.intent == "QueryBudget" && topIntent.score >= 0.45;
+            }
+            return valid;
+        }
+
+        private async Task<bool> DurationValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(promptContext.Context, cancellationToken);
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            var valid = false;
+
+            if (promptContext.Recognized.Succeeded)
+            {
+                valid = topIntent.intent == "QueryDuration" && topIntent.score >= 0.45;
+            }
+            return valid;
+        }
 
 
 

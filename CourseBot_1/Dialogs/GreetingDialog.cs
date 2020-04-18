@@ -2,6 +2,7 @@
 using CourseBot_1.Helpers;
 using CourseBot_1.Models;
 using CourseBot_1.Services;
+using LuisModel;
 using Microsoft.Azure.CognitiveServices.Language.LUIS.Runtime.Models;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -97,11 +98,6 @@ namespace CourseBot_1.Dialogs
         }
 
 
-
-       
-
-    
-
         private async Task<DialogTurnResult> NiceStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
             UserProfile userProfile = await _botStateService.UserProfileAccessor.GetAsync(stepContext.Context, () => new UserProfile());
@@ -127,22 +123,14 @@ namespace CourseBot_1.Dialogs
 
 
     private async Task<DialogTurnResult> OrganizationStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
-            {
-
-            
-           
+            {         
             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.organization",
                     new PromptOptions
                   {
                       Prompt = MessageFactory.Text("What type of organization do you represent?"),
                      RetryPrompt = MessageFactory.Text("Invalid"),
                  }, cancellationToken);
-
-            
-
         }
-
-
 
 
         private async Task<DialogTurnResult> DevelopementStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
@@ -157,17 +145,13 @@ namespace CourseBot_1.Dialogs
             var topIntent = recognizerResult.GetTopScoringIntent();
             
 
-
-
-
-            foreach (var entity in entities)
+            foreach (var entity in luisResult.Entities)
             {
-
-
-                if (Common.OrganizationType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
+                if(entity.Type == "OrganizationType")
                 {
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Wow ! {0}, I guess funny to work there!", entity.Entity)), cancellationToken);
                     stepContext.Values["organization"] = (string)stepContext.Result == entity.Entity;
+
                 }
                 else
                 {
@@ -176,17 +160,12 @@ namespace CourseBot_1.Dialogs
 
             }
 
-
-
-
-
             return await stepContext.PromptAsync($"{nameof(GreetingDialog)}.developement",
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Great! What type of project do you want to develop?"),
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
-                }, cancellationToken);
-            
+                }, cancellationToken);           
         }
 
       
@@ -197,15 +176,13 @@ namespace CourseBot_1.Dialogs
             var result = await _botServices.Dispatch.RecognizeAsync(stepContext.Context, cancellationToken);
             var luisResult = result.Properties["luisResult"] as LuisResult;
             var entities = luisResult.Entities;
+            
 
 
 
-
-            foreach (var entity in entities)
+            foreach (var entity in luisResult.Entities)
             {
-
-
-                if (Common.DevType.Any(s => s.Equals(entity.Entity, StringComparison.OrdinalIgnoreCase)))
+                if (entity.Type == "DevType")
                 {
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", entity.Entity)), cancellationToken);
                     stepContext.Values["developement"] = (string)stepContext.Result == entity.Entity;
@@ -235,6 +212,7 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> NextDialogasync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
+
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
@@ -257,7 +235,7 @@ namespace CourseBot_1.Dialogs
 
             if (promptContext.Recognized.Succeeded)
             {
-                valid = topIntent.intent == "QueryOrg";
+                valid = topIntent.intent == "QueryOrg" && topIntent.score >= 0.45;
             }
            
             return valid;
@@ -276,7 +254,7 @@ namespace CourseBot_1.Dialogs
 
             if (promptContext.Recognized.Succeeded)
             {
-                valid = topIntent.intent == "QueryDev" && topIntent.score >= 0.6;
+                valid = topIntent.intent == "QueryDev" && topIntent.score >= 0.45;
             }
             return valid;
         }

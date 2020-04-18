@@ -92,7 +92,7 @@ namespace CourseBot_1.Dialogs
                 
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("Thanks!\nBelow you can provide a link to your project if you like"),
+                    Prompt = MessageFactory.Text("Thanks!\nCan you share a link to your, please"),
                     RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
                 }, cancellationToken);
 
@@ -110,7 +110,6 @@ namespace CourseBot_1.Dialogs
 
 
             return await stepContext.EndDialogAsync(null, cancellationToken);
-            //return await stepContext.BeginDialogAsync($"{nameof(FinalDevDialog)}.flowDialog", null, cancellationToken);
 
 
 
