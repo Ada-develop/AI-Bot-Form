@@ -103,7 +103,7 @@ namespace CourseBot_1.Dialogs
                 {
                     if (entity.Type == "money")
                     {
-                       stepContext.Values["budget"] = (string)stepContext.Result == entity.Entity;
+                       stepContext.Values["budget"] = entity.Entity;
                         await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I understood your's budget!")), cancellationToken);
 
 
@@ -150,7 +150,7 @@ namespace CourseBot_1.Dialogs
                 {
                     if (entity.Type == "Duration")
                     {
-                        stepContext.Values["duration"] = (string)stepContext.Result == entity.Entity;
+                        stepContext.Values["duration"] =  entity.Entity;
                         await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Okey, I got it!")), cancellationToken);
 
 
@@ -225,7 +225,7 @@ namespace CourseBot_1.Dialogs
                 {
                     if (entity.Type == "money")
                     {
-                        stepContext.Values["priceH"] = (string)stepContext.Result == entity.Entity;
+                        stepContext.Values["priceH"] = entity.Entity;
                         await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Cool! Get it!")), cancellationToken);
 
 
@@ -248,7 +248,6 @@ namespace CourseBot_1.Dialogs
 
         private async Task<DialogTurnResult> CommentStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
-            stepContext.Values["priceH"] = (string)stepContext.Result;
 
 
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.comment",

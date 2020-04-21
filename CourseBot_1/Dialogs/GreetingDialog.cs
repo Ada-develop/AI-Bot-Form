@@ -48,7 +48,7 @@ namespace CourseBot_1.Dialogs
                 DevelopementStepAsync,
                 BranchesStepAsync,
                 NextDialogasync,              
-                //SumStepAsync,
+                
 
 
             };
@@ -150,7 +150,7 @@ namespace CourseBot_1.Dialogs
                 if(entity.Type == "OrganizationType")
                 {
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Wow ! {0}, I guess funny to work there!", entity.Entity)), cancellationToken);
-                    stepContext.Values["organization"] = (string)stepContext.Result == entity.Entity;
+                    stepContext.Values["organization"] =  entity.Entity;
 
                 }
                 else
@@ -185,12 +185,10 @@ namespace CourseBot_1.Dialogs
                 if (entity.Type == "DevType")
                 {
                     await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("Nice ! You have kinda interesting idea, to create a {0}", entity.Entity)), cancellationToken);
-                    stepContext.Values["developement"] = (string)stepContext.Result == entity.Entity;
+                    stepContext.Values["developement"] = entity.Entity;
                 }
-                else
-                {
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format("LOL! I dont understand , and here should be QnA :D")), cancellationToken);
-                }
+
+                
 
             }
             
