@@ -3,6 +3,7 @@ using CourseBot_1.Services;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
+using Microsoft.BotBuilderSamples;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -22,15 +23,19 @@ namespace CourseBot_1.Bots
         protected readonly BotStateService _botStateService;
         //Logger object:
         protected readonly ILogger _logger;
+
+        protected readonly BotServices _botServices;
         #endregion
 
 
         //Injecting Variables botservice, dialog type and logger object, checking for nulls and setting the to private variables
-        public DialogBot(BotStateService botStateService, T dialog, ILogger<DialogBot<T>> logger)
+        public DialogBot(BotServices botServices,BotStateService botStateService, T dialog, ILogger<DialogBot<T>> logger)
         {
             _botStateService = botStateService ?? throw new System.ArgumentNullException(nameof(botStateService));
             _dialog = dialog ?? throw new System.ArgumentNullException(nameof(dialog));
             _logger = logger ?? throw new System.ArgumentNullException(nameof(logger));
+            _botServices = botServices ?? throw new System.ArgumentNullException(nameof(botServices));
+
         }
 
 
@@ -64,14 +69,50 @@ namespace CourseBot_1.Bots
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
+            // First, we use the dispatch model to determine which cognitive service (LUIS or QnA) to use.
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(turnContext, cancellationToken);
+
+            // Top intent tell us which cognitive service to use.
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+
+
             //Log info to logger
 
             _logger.LogInformation("Running dialog with Message Activity.");
 
             //Run the dialog with the new message Activity
             await _dialog.Run(turnContext, _botStateService.DialogStateAccessor, cancellationToken);
-           
-        } 
+            await DispatchToTopIntentAsync(turnContext, topIntent.intent, recognizerResult, cancellationToken);
+
+
+        }
+
+        private async Task DispatchToTopIntentAsync(ITurnContext<IMessageActivity> turnContext, string intent, RecognizerResult recognizerResult, CancellationToken cancellationToken)
+        {
+            switch (intent)
+            {
+                
+                case "None":
+                    await ProcessSampleQnAAsync(turnContext, cancellationToken);
+                    break;
+                default:
+                    _logger.LogInformation($"Dispatch unrecognized intent: {intent}.");
+                    break;
+            }
+        }
+
+        private async Task ProcessSampleQnAAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            _logger.LogInformation("ProcessSampleQnAAsync");
+
+            var results = await _botServices.SampleQnA.GetAnswersAsync(turnContext);
+            if (results.Any())
+            {
+                await turnContext.SendActivityAsync(MessageFactory.Text(results.First().Answer), cancellationToken);
+            }
+            
+        }
 
 
 
