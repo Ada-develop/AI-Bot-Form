@@ -51,7 +51,6 @@ namespace CourseBot_1.Dialogs
                 EmailStepAsync,
                 PolicyStepAsync,
                 
-                //SummaryStepAsync
             };
 
             //Types of subdialogs
@@ -286,11 +285,11 @@ namespace CourseBot_1.Dialogs
 
 
 
-       
-    
 
 
-        
+
+
+        #region Summary
 
         private async Task<DialogTurnResult> SummaryStepAsync(WaterfallStepContext stepContext, CancellationToken cancellationToken)
         {
@@ -330,6 +329,7 @@ namespace CourseBot_1.Dialogs
 
 
         }
+        #endregion
 
         #region Validators
 
