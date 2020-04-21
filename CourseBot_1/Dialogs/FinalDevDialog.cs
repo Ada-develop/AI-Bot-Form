@@ -92,8 +92,8 @@ namespace CourseBot_1.Dialogs
                 
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("Thanks!\nCan you share a link to your, please"),
-                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                    Prompt = MessageFactory.Text("Thanks!\nCan you share a link to your project or website, please :)"),
+                    RetryPrompt = MessageFactory.Text("Write link , for example https://www.google.com/ , or just write 'Skip' word :)"),
                 }, cancellationToken);
 
 

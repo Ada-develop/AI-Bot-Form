@@ -77,7 +77,7 @@ namespace CourseBot_1.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Do you have a budget in mind?"),
-                    RetryPrompt = MessageFactory.Text("Invalid, till QnA")
+                    RetryPrompt = MessageFactory.Text("Soo, how much money you are plan to spent, to realize your dream project?")
                 }, cancellationToken);
 
         }
@@ -107,10 +107,7 @@ namespace CourseBot_1.Dialogs
 
 
                     }
-                    else
-                    {
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
-                    }
+                  
 
                 }
             }
@@ -127,7 +124,7 @@ namespace CourseBot_1.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What is the anticipated duration of the project?"),
-                    RetryPrompt = MessageFactory.Text("Invalid, till QnA"),
+                    RetryPrompt = MessageFactory.Text("Weeks? Months ? But , yeah :  "),
                 }, cancellationToken);
         }
 
@@ -154,10 +151,7 @@ namespace CourseBot_1.Dialogs
 
 
                     }
-                    else
-                    {
-                        await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
-                    }
+                   
 
                 }
             }
@@ -176,7 +170,7 @@ namespace CourseBot_1.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("How soon do you need your dev team to start working? Just give me the exact date "),
-                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                    RetryPrompt = MessageFactory.Text("year-month-day , so yeah : "),
                 }, cancellationToken);
         }
 
@@ -200,6 +194,7 @@ namespace CourseBot_1.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("What price per hour are you expecting to pay to your future development team? "),
+                    RetryPrompt = MessageFactory.Text("I mean $/hour , But yeah we can talk, sooo : ")
 
                 }, cancellationToken);
 
@@ -278,7 +273,7 @@ namespace CourseBot_1.Dialogs
             return await stepContext.PromptAsync($"{nameof(FlowDialog)}.policy",
                 new PromptOptions
                 {
-                    Prompt = MessageFactory.Text("By clicking the button below, you agree that we, will process your personal information in accordance with our 'Privacy Policy' "),
+                    Prompt = MessageFactory.Text("It was really nice to Chat with you,  will you let me process your personal information in accordance with our 'Privacy Policy', to realize your dreams with BgTeams? :} "),
                     Choices = ChoiceFactory.ToChoices(new List<string> { "Agree", "Cancel" }),
                 }, cancellationToken);
         }
@@ -348,6 +343,11 @@ namespace CourseBot_1.Dialogs
 
 
 
+ 
+
+
+        
+
         private async Task<bool> BudgetValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
         {
             // Dispatch model to determine which cognitive service to use LUIS or QnA
@@ -361,7 +361,7 @@ namespace CourseBot_1.Dialogs
 
             if (promptContext.Recognized.Succeeded)
             {
-                valid = topIntent.intent == "QueryBudget" && topIntent.score >= 0.45;
+                valid = topIntent.intent == "QueryBudget";
             }
             return valid;
         }
@@ -379,7 +379,7 @@ namespace CourseBot_1.Dialogs
 
             if (promptContext.Recognized.Succeeded)
             {
-                valid = topIntent.intent == "QueryDuration" && topIntent.score >= 0.45;
+                valid = topIntent.intent == "QueryDuration" && topIntent.score >= 0.25;
             }
             return valid;
         }

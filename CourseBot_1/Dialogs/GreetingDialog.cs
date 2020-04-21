@@ -61,7 +61,7 @@ namespace CourseBot_1.Dialogs
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.name"));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.organization", OrgValidatorAsync));
             AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.developement", DevValidatorAsync));
-            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.branch"));
+            AddDialog(new TextPrompt($"{nameof(GreetingDialog)}.branch" ));
 
             //AddDialog(new QnADialog($"{ nameof(GreetingDialog)}.qna"));
             
@@ -128,7 +128,7 @@ namespace CourseBot_1.Dialogs
                     new PromptOptions
                   {
                       Prompt = MessageFactory.Text("What type of organization do you represent?"),
-                     RetryPrompt = MessageFactory.Text("Invalid"),
+                     RetryPrompt = MessageFactory.Text("Heh ! So what organization you are represent?"),
                  }, cancellationToken);
         }
 
@@ -153,10 +153,7 @@ namespace CourseBot_1.Dialogs
                     stepContext.Values["organization"] =  entity.Entity;
 
                 }
-                else
-                {
-                    await stepContext.Context.SendActivityAsync(MessageFactory.Text(String.Format(" I dont understand , and here should be QnA :D")), cancellationToken);
-                }
+              
 
             }
 
@@ -164,7 +161,7 @@ namespace CourseBot_1.Dialogs
                 new PromptOptions
                 {
                     Prompt = MessageFactory.Text("Great! What type of project do you want to develop?"),
-                    RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                    RetryPrompt = MessageFactory.Text("Sooo, what you want to develop? :) "),
                 }, cancellationToken);           
         }
 
@@ -197,7 +194,7 @@ namespace CourseBot_1.Dialogs
                    new PromptOptions
                    {
                        Prompt = MessageFactory.Text("OK. What is the current stage of your project? "),
-                       RetryPrompt = MessageFactory.Text("Value is not valid, try again."),
+                       RetryPrompt = MessageFactory.Text("Ok. But tell me your stage of the project :D"),
 
                    }, cancellationToken);
 
@@ -214,9 +211,14 @@ namespace CourseBot_1.Dialogs
             return await stepContext.EndDialogAsync(null, cancellationToken);
         }
 
-        
+
 
         #region VALIDATORS
+
+
+
+      
+
 
 
         private async Task<bool> OrgValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)

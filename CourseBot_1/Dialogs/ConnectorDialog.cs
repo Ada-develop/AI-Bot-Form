@@ -49,7 +49,7 @@ namespace CourseBot_1.Dialogs
             AddDialog(new FinalDevDialog($"{nameof(ConnectorDialog)}.final", _botStateService,_botServices));
             AddDialog(new WaterfallDialog($"{nameof(ConnectorDialog)}.mainFlow", waterfallSteps));
             AddDialog(new AttachmentDialog($"{nameof(ConnectorDialog)}.attach", _botStateService,_botServices));
-            AddDialog(new TextPrompt($"{nameof(ConnectorDialog)}.branch"));
+            AddDialog(new TextPrompt($"{nameof(ConnectorDialog)}.branch", BranchValidatorAsync));
 
 
             InitialDialogId = $"{nameof(ConnectorDialog)}.mainFlow";
@@ -87,15 +87,15 @@ namespace CourseBot_1.Dialogs
             var qna = await _botServices.SampleQnA.GetAnswersAsync(stepContext.Context);
 
 
-            if (topIntent.intent == "QueryStageFinal" && topIntent.score >= 0.45)
+            if (topIntent.intent == "QueryStageFinal" && topIntent.score >= 0.15)
             {
                 return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.final", null, cancellationToken);
             }
-            else if (topIntent.intent == "QueryStageMid" && topIntent.score >= 0.45)
+            else if (topIntent.intent == "QueryStageMid" && topIntent.score >= 0.15)
             {
                 return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.attach", null, cancellationToken);
             }
-            else if (topIntent.intent == "QueryStage" && topIntent.score >= 0.45)
+            else if (topIntent.intent == "QueryStage" && topIntent.score >= 0.15)
             {
                 return await stepContext.BeginDialogAsync($"{nameof(ConnectorDialog)}.flowDialog", null, cancellationToken);
             }
@@ -123,5 +123,32 @@ namespace CourseBot_1.Dialogs
         {
              return await stepContext.EndDialogAsync(null, cancellationToken);
         }
+
+
+
+
+        #region Validator
+
+        private async Task<bool> BranchValidatorAsync(PromptValidatorContext<string> promptContext, CancellationToken cancellationToken)
+        {
+            // Dispatch model to determine which cognitive service to use LUIS or QnA
+
+            var recognizerResult = await _botServices.Dispatch.RecognizeAsync(promptContext.Context, cancellationToken);
+
+
+            //Top Intent tell us which cognitive service to use
+            var topIntent = recognizerResult.GetTopScoringIntent();
+
+            var valid = false;
+
+            if (promptContext.Recognized.Succeeded)
+            {
+                valid = topIntent.intent == "QueryStage" || topIntent.intent == "QueryStageMid" || topIntent.intent == "QueryStageFinal";
+            }
+
+            return valid;
+        }
+
+        #endregion
     }
 }

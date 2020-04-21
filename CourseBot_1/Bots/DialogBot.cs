@@ -75,8 +75,6 @@ namespace CourseBot_1.Bots
             // Top intent tell us which cognitive service to use.
             var topIntent = recognizerResult.GetTopScoringIntent();
 
-
-
             //Log info to logger
 
             _logger.LogInformation("Running dialog with Message Activity.");
