@@ -18,3 +18,5 @@ C:\Users\adamj\source\repos\CourseBot_1\CourseBot_1\obj\Debug\netcoreapp2.1\Cour
 C:\Users\adamj\source\repos\CourseBot_1\CourseBot_1\obj\Debug\netcoreapp2.1\CourseBot_1.RazorTargetAssemblyInfo.cache
 C:\Users\adamj\source\repos\CourseBot_1\CourseBot_1\obj\Debug\netcoreapp2.1\CourseBot_1.dll
 C:\Users\adamj\source\repos\CourseBot_1\CourseBot_1\obj\Debug\netcoreapp2.1\CourseBot_1.pdb
+C:\Users\adamj\source\repos\CourseBot_1\CourseBot_1\obj\Debug\netcoreapp2.1\CourseBot_1.csproj.CoreCompileInputs.cache
+C:\Users\adamj\source\repos\CourseBot_1\CourseBot_1\obj\Debug\netcoreapp2.1\CourseBot_1.genruntimeconfig.cache

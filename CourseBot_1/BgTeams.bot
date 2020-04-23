@@ -1,0 +1,18 @@
+{
+    "name": "BgTeams C#",
+    "description": "",
+    "services": [
+        {
+            "type": "endpoint",
+            "appId": "",
+            "appPassword": "",
+            "endpoint": "http://localhost:3978/api/messages",
+            "id": "130fd580-6d1f-11ea-adea-d92142b91165",
+            "name": "http://localhost:3978/api/messages"
+        }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "overrides": null,
+    "path": "C:\\Users\\adamj\\Desktop\\BgTeams.bot"
+}
