@@ -1,8 +1,8 @@
 ﻿# Registration Form filling Bot Sample
 
-Bot Framework v4 echo bot sample.
 
-This bot has been created using [Bot Framework](https://dev.botframework.com), it shows how to create a simple bot that accepts input from the user and echoes it back.
+
+In this project, to create a bot was used Microsoft BotFramework in C# language. Used Services : QnA - Question and Answers data-set for interractive communication with user & LUIS - Language understanding interface service , which helps to identify valuable entities from user input.
 
 ## Prerequisites
 
