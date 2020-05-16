@@ -1,4 +1,4 @@
-﻿# CourseBot_1
+﻿# Registration Form filling Bot Sample
 
 Bot Framework v4 echo bot sample.
 
